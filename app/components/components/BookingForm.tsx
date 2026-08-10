@@ -2,177 +2,161 @@
 
 import { FormEvent, useState } from "react";
 
-type BookingFormProps = {
-  service?: string;
-  requestedService?: string;
+const services = {
+  "Electrical Services": [
+    "House wiring",
+    "Electrical installation",
+    "Troubleshooting",
+    "Socket and switch installation",
+    "Lighting installation",
+    "DB and distribution board work",
+    "MCB and breaker replacement",
+    "Electrical maintenance",
+  ],
+
+  "Solar Energy": [
+    "Solar panel installation",
+    "Solar system design",
+    "Inverter installation",
+    "Battery installation",
+    "Solar troubleshooting",
+    "Solar maintenance",
+    "Solar lighting",
+  ],
+
+  "Solar Water Heaters": [
+    "Solar water heater installation",
+    "System inspection",
+    "Leak troubleshooting",
+    "Controller installation",
+    "Heating element replacement",
+    "Maintenance",
+  ],
+
+  "Air Conditioning": [
+    "AC installation",
+    "AC servicing",
+    "AC cleaning",
+    "AC troubleshooting",
+    "Electrical fault diagnosis",
+    "AC maintenance",
+  ],
+
+  Refrigeration: [
+    "Refrigerator repair",
+    "Freezer repair",
+    "Cooling fault diagnosis",
+    "Electrical troubleshooting",
+    "Thermostat replacement",
+    "Refrigeration maintenance",
+  ],
+
+  Electronics: [
+    "Electronic equipment troubleshooting",
+    "Power supply repair",
+    "Circuit diagnosis",
+    "Component replacement",
+    "Audio equipment repair",
+    "Electronic maintenance",
+  ],
+
+  "Networking & Wi-Fi": [
+    "Wi-Fi installation",
+    "Router configuration",
+    "LAN installation",
+    "Ethernet cabling",
+    "Network troubleshooting",
+    "Network maintenance",
+  ],
+
+  "CCTV & Security": [
+    "CCTV camera installation",
+    "DVR/NVR configuration",
+    "Remote CCTV viewing",
+    "Camera troubleshooting",
+    "Security system maintenance",
+  ],
+
+  "Computers & IT": [
+    "Computer troubleshooting",
+    "Windows installation",
+    "Software installation",
+    "Computer maintenance",
+    "Hardware diagnosis",
+    "IT support",
+  ],
+
+  Printers: [
+    "Printer installation",
+    "Printer troubleshooting",
+    "Network printer setup",
+    "Driver installation",
+    "Printer maintenance",
+  ],
+
+  Plumbing: [
+    "Pipe installation",
+    "Leak repair",
+    "Tap installation",
+    "Water system troubleshooting",
+    "Drainage troubleshooting",
+    "Plumbing maintenance",
+  ],
+
+  "Welding & Fabrication": [
+    "Metal welding",
+    "Gate fabrication",
+    "Door fabrication",
+    "Metal repairs",
+    "Frame fabrication",
+    "General fabrication",
+  ],
+
+  "General Troubleshooting": [
+    "Electrical fault diagnosis",
+    "Electronic fault diagnosis",
+    "Appliance troubleshooting",
+    "Dispenser troubleshooting",
+    "Power-related faults",
+    "Equipment inspection",
+  ],
+};
+
+type ServiceName = keyof typeof services;
+
+type Props = {
+  initialService?: string;
   onClose?: () => void;
 };
 
 export default function BookingForm({
-  service = "",
-  requestedService = "",
+  initialService = "",
   onClose,
-}: BookingFormProps) {
+}: Props) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
-  const [selectedService, setSelectedService] = useState(service);
-  const [selectedJob, setSelectedJob] = useState(requestedService);
+  const [service, setService] = useState(initialService);
+  const [specificService, setSpecificService] = useState("");
   const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [bookingReference, setBookingReference] = useState("");
+  const [reference, setReference] = useState("");
 
-  const serviceOptions = [
-    "Electrical Services",
-    "Solar Energy",
-    "Solar Water Heaters",
-    "Air Conditioning",
-    "Refrigeration",
-    "Electronics",
-    "Networking & Wi-Fi",
-    "CCTV & Security",
-    "Computers & IT",
-    "Printers",
-    "Plumbing",
-    "Welding & Fabrication",
-    "General Troubleshooting",
-  ];
+  const selectedServices =
+    service && service in services
+      ? services[service as ServiceName]
+      : [];
 
-  const jobOptions: Record<string, string[]> = {
-    "Electrical Services": [
-      "House wiring",
-      "Electrical installation",
-      "Fault finding and troubleshooting",
-      "Socket and switch installation",
-      "Lighting installation",
-      "DB and distribution board work",
-      "MCB and breaker replacement",
-      "Power fault diagnosis",
-      "Electrical maintenance",
-    ],
-
-    "Solar Energy": [
-      "Solar panel installation",
-      "Solar system design",
-      "Inverter installation",
-      "Battery installation",
-      "Solar troubleshooting",
-      "Solar maintenance",
-      "Off-grid solar system",
-      "Solar lighting",
-    ],
-
-    "Solar Water Heaters": [
-      "Solar water heater installation",
-      "System inspection",
-      "Leak troubleshooting",
-      "Controller installation",
-      "Heating element replacement",
-      "Maintenance",
-    ],
-
-    "Air Conditioning": [
-      "AC installation",
-      "AC servicing",
-      "AC cleaning",
-      "AC troubleshooting",
-      "Electrical fault diagnosis",
-      "AC maintenance",
-    ],
-
-    Refrigeration: [
-      "Refrigerator repair",
-      "Freezer repair",
-      "Cooling fault diagnosis",
-      "Electrical troubleshooting",
-      "Thermostat replacement",
-      "Refrigeration maintenance",
-    ],
-
-    Electronics: [
-      "Electronic equipment troubleshooting",
-      "Power supply repair",
-      "Circuit diagnosis",
-      "Component replacement",
-      "Audio equipment repair",
-      "Electronic maintenance",
-    ],
-
-    "Networking & Wi-Fi": [
-      "Wi-Fi installation",
-      "Router configuration",
-      "LAN installation",
-      "Ethernet cabling",
-      "Network troubleshooting",
-      "Network maintenance",
-      "Internet connectivity diagnosis",
-    ],
-
-    "CCTV & Security": [
-      "CCTV camera installation",
-      "DVR/NVR configuration",
-      "Remote CCTV viewing",
-      "Camera troubleshooting",
-      "Security system maintenance",
-      "Network camera setup",
-    ],
-
-    "Computers & IT": [
-      "Computer troubleshooting",
-      "Windows installation",
-      "Software installation",
-      "Computer maintenance",
-      "Hardware diagnosis",
-      "Virus/malware troubleshooting",
-      "IT support",
-    ],
-
-    Printers: [
-      "Printer installation",
-      "Printer troubleshooting",
-      "Network printer setup",
-      "Driver installation",
-      "Printer maintenance",
-      "Printing fault diagnosis",
-    ],
-
-    Plumbing: [
-      "Pipe installation",
-      "Leak repair",
-      "Tap installation",
-      "Water system troubleshooting",
-      "Drainage troubleshooting",
-      "Plumbing maintenance",
-    ],
-
-    "Welding & Fabrication": [
-      "Metal welding",
-      "Gate fabrication",
-      "Door fabrication",
-      "Metal repairs",
-      "Frame fabrication",
-      "General fabrication",
-    ],
-
-    "General Troubleshooting": [
-      "Electrical fault diagnosis",
-      "Electronic fault diagnosis",
-      "Appliance troubleshooting",
-      "Dispenser troubleshooting",
-      "Power-related faults",
-      "Equipment inspection",
-      "Preventive maintenance",
-    ],
-  };
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function submitBooking(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
       const response = await fetch("/api/bookings", {
@@ -184,8 +168,8 @@ export default function BookingForm({
           name,
           phone,
           location,
-          service: selectedService,
-          requestedService: selectedJob,
+          service,
+          requestedService: specificService,
           description,
         }),
       });
@@ -194,17 +178,21 @@ export default function BookingForm({
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.message || "Unable to submit your booking."
+          data.message || "Booking submission failed."
         );
       }
 
-      setBookingReference(data.booking.bookingReference);
+      setReference(
+        data.booking?.bookingReference ||
+          "BOOKING RECEIVED"
+      );
+
       setSuccess(true);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Unable to submit your booking."
+          : "Unable to submit booking."
       );
     } finally {
       setLoading(false);
@@ -223,77 +211,68 @@ export default function BookingForm({
           BOOKING RECEIVED
         </span>
 
-        <h2>Thank You, {name}!</h2>
+        <h2>
+          Thank You, {name}!
+        </h2>
 
         <p>
-          Your service request has been successfully received by
-          Dr Doi Technologies.
+          Your service request has been
+          successfully received.
         </p>
 
         <div className="booking-reference">
-          <small>BOOKING REFERENCE</small>
-          <strong>{bookingReference}</strong>
+          <small>
+            BOOKING REFERENCE
+          </small>
+
+          <strong>
+            {reference}
+          </strong>
         </div>
 
-        <p className="success-note">
-          Please keep your booking reference for communication
-          about your service request.
-        </p>
+        <a
+          href={`https://wa.me/254114280995?text=${encodeURIComponent(
+            `Hello Dr Doi Technologies. I have submitted booking ${reference} for ${service} - ${specificService}.`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="whatsapp-button"
+        >
+          📱 Continue on WhatsApp
+        </a>
 
-        <div className="modal-actions">
-
-          <a
-            href={`https://wa.me/254114280995?text=${encodeURIComponent(
-              `Hello Dr Doi Technologies. I have submitted booking ${bookingReference} for ${selectedService} - ${selectedJob}.`
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whatsapp-button"
-          >
-            📱 Continue on WhatsApp
-          </a>
-
-          <button
-            type="button"
-            className="payment-button"
-            onClick={() => {
-              alert(
-                "M-Pesa payment will be connected after the booking system is confirmed."
-              );
-            }}
-          >
-            💳 Pay Deposit
-          </button>
-
-        </div>
-
-        {onClose && (
-          <button
-            type="button"
-            className="close-booking-button"
-            onClick={onClose}
-          >
-            Close
-          </button>
-        )}
+        <button
+          type="button"
+          className="close-booking-button"
+          onClick={onClose}
+        >
+          Close
+        </button>
 
       </div>
     );
   }
 
   return (
-    <form className="booking-form" onSubmit={handleSubmit}>
+    <form
+      className="booking-form"
+      onSubmit={submitBooking}
+    >
 
       <div className="booking-header">
+
         <span className="modal-label">
           DR DOI TECHNOLOGIES
         </span>
 
-        <h2>Book a Service</h2>
+        <h2>
+          Book a Service
+        </h2>
 
         <p>
-          Tell us what you need and we will get back to you.
+          Tell us what service you need.
         </p>
+
       </div>
 
       {error && (
@@ -305,30 +284,32 @@ export default function BookingForm({
       <div className="form-grid">
 
         <div className="form-group">
-          <label htmlFor="booking-name">
+          <label>
             Full Name *
           </label>
 
           <input
-            id="booking-name"
             type="text"
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
             placeholder="Enter your full name"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="booking-phone">
+          <label>
             Phone Number *
           </label>
 
           <input
-            id="booking-phone"
             type="tel"
             value={phone}
-            onChange={(event) => setPhone(event.target.value)}
+            onChange={(e) =>
+              setPhone(e.target.value)
+            }
             placeholder="0712345678"
             required
           />
@@ -337,31 +318,31 @@ export default function BookingForm({
       </div>
 
       <div className="form-group">
-        <label htmlFor="booking-location">
+        <label>
           Location *
         </label>
 
         <input
-          id="booking-location"
           type="text"
           value={location}
-          onChange={(event) => setLocation(event.target.value)}
+          onChange={(e) =>
+            setLocation(e.target.value)
+          }
           placeholder="e.g. Nakuru, Lanet"
           required
         />
       </div>
 
       <div className="form-group">
-        <label htmlFor="booking-service">
+        <label>
           Service Category *
         </label>
 
         <select
-          id="booking-service"
-          value={selectedService}
-          onChange={(event) => {
-            setSelectedService(event.target.value);
-            setSelectedJob("");
+          value={service}
+          onChange={(e) => {
+            setService(e.target.value);
+            setSpecificService("");
           }}
           required
         >
@@ -369,51 +350,64 @@ export default function BookingForm({
             Select a service
           </option>
 
-          {serviceOptions.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
+          {Object.keys(services).map(
+            (item) => (
+              <option
+                key={item}
+                value={item}
+              >
+                {item}
+              </option>
+            )
+          )}
         </select>
       </div>
 
       <div className="form-group">
-        <label htmlFor="booking-job">
+        <label>
           Specific Service *
         </label>
 
         <select
-          id="booking-job"
-          value={selectedJob}
-          onChange={(event) => setSelectedJob(event.target.value)}
-          disabled={!selectedService}
+          value={specificService}
+          onChange={(e) =>
+            setSpecificService(
+              e.target.value
+            )
+          }
+          disabled={!service}
           required
         >
           <option value="">
-            {selectedService
-              ? "Select the service you need"
-              : "Select a category first"}
+            Select the service
           </option>
 
-          {selectedService &&
-            jobOptions[selectedService]?.map((item) => (
-              <option key={item} value={item}>
+          {selectedServices.map(
+            (item) => (
+              <option
+                key={item}
+                value={item}
+              >
                 {item}
               </option>
-            ))}
+            )
+          )}
         </select>
       </div>
 
       <div className="form-group">
-        <label htmlFor="booking-description">
-          Describe the Problem / Job
+        <label>
+          Describe the Problem
         </label>
 
         <textarea
-          id="booking-description"
           value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          placeholder="Tell us more about what you need..."
+          onChange={(e) =>
+            setDescription(
+              e.target.value
+            )
+          }
+          placeholder="Describe what you need..."
           rows={5}
           maxLength={1000}
         />
@@ -424,12 +418,8 @@ export default function BookingForm({
       </div>
 
       <div className="booking-notice">
-        <span>🔒</span>
-
-        <p>
-          Your information is used only to process your service
-          request and contact you about the booking.
-        </p>
+        🔒 Your information is used only
+        to process your booking.
       </div>
 
       <button
@@ -437,7 +427,9 @@ export default function BookingForm({
         className="submit-booking"
         disabled={loading}
       >
-        {loading ? "Submitting Booking..." : "Submit Booking →"}
+        {loading
+          ? "Submitting..."
+          : "Submit Booking →"}
       </button>
 
     </form>

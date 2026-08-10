@@ -13,7 +13,8 @@ const serviceGroups = [
   {
     title: "Troubleshooting",
     icon: "🔧",
-    description: "Diagnose and repair electrical and technology faults.",
+    description:
+      "Diagnose and repair electrical and technology faults.",
     services: [
       {
         name: "Electrical Fault Diagnosis",
@@ -176,19 +177,11 @@ const serviceGroups = [
 ];
 
 export default function Home() {
-  const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [selectedGroup, setSelectedGroup] =
+    useState<any>(null);
 
   const [selectedService, setSelectedService] =
     useState<Service | null>(null);
-
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    location: "",
-  });
-
-  const [paymentStatus, setPaymentStatus] =
-    useState("");
 
   const openGroup = (group: any) => {
     setSelectedGroup(group);
@@ -196,56 +189,7 @@ export default function Home() {
 
   const chooseService = (service: Service) => {
     setSelectedService(service);
-    setPaymentStatus("");
-  };
-
-  const handlePayment = async () => {
-    if (!selectedService) return;
-
-    if (!form.name || !form.phone || !form.location) {
-      setPaymentStatus(
-        "Please fill in all booking details."
-      );
-      return;
-    }
-
-    setPaymentStatus(
-      "Sending M-PESA payment request..."
-    );
-
-    try {
-      const response = await fetch("/api/mpesa", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: selectedService.price,
-          phone: form.phone,
-          name: form.name,
-          service: selectedService.name,
-          location: form.location,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setPaymentStatus(
-          data.message ||
-            "Payment request sent. Check your phone and enter your M-PESA PIN."
-        );
-      } else {
-        setPaymentStatus(
-          data.error ||
-            "Unable to initiate payment. Please try again."
-        );
-      }
-    } catch {
-      setPaymentStatus(
-        "Connection error. Please check your internet connection and try again."
-      );
-    }
+    setSelectedGroup(null);
   };
 
   return (
@@ -276,10 +220,21 @@ export default function Home() {
         </div>
 
         <nav>
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#contact">Contact</a>
+          <a href="#home">
+            Home
+          </a>
+
+          <a href="#about">
+            About
+          </a>
+
+          <a href="#services">
+            Services
+          </a>
+
+          <a href="#contact">
+            Contact
+          </a>
         </nav>
 
         <a
@@ -311,9 +266,9 @@ export default function Home() {
           </h1>
 
           <p className="hero-text">
-            Reliable electrical, electronics, solar,
-            networking and technology services in
-            Nakuru and beyond.
+            Reliable electrical, electronics,
+            solar, networking and technology
+            services in Nakuru and beyond.
           </p>
 
           <div className="hero-buttons">
@@ -364,11 +319,7 @@ export default function Home() {
 
           <div>
             <strong>⚡</strong>
-
-            <h3>
-              Professional
-            </h3>
-
+            <h3>Professional</h3>
             <p>
               Reliable technical solutions.
             </p>
@@ -376,11 +327,7 @@ export default function Home() {
 
           <div>
             <strong>🛠️</strong>
-
-            <h3>
-              Reliable
-            </h3>
-
+            <h3>Reliable</h3>
             <p>
               Quality service and support.
             </p>
@@ -388,11 +335,7 @@ export default function Home() {
 
           <div>
             <strong>📍</strong>
-
-            <h3>
-              Nakuru
-            </h3>
-
+            <h3>Nakuru</h3>
             <p>
               Serving Nakuru and beyond.
             </p>
@@ -534,7 +477,7 @@ export default function Home() {
 
       )}
 
-      {/* BOOKING + PAYMENT */}
+      {/* BOOKING FORM */}
 
       {selectedService && (
 
@@ -551,99 +494,12 @@ export default function Home() {
               ×
             </button>
 
-            <p className="eyebrow">
-              BOOK SERVICE
-            </p>
-
-            <h2>
-              {selectedService.name}
-            </h2>
-
-            <p>
-              {selectedService.description}
-            </p>
-
-            <div className="price-box">
-
-              <span>
-                Service Fee
-              </span>
-
-              <strong>
-                KSh{" "}
-                {selectedService.price.toLocaleString()}
-              </strong>
-
-            </div>
-
-            <label>
-              Your Name
-            </label>
-
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={form.name}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  name: e.target.value,
-                })
+            <BookingForm
+              initialService=""
+              onClose={() =>
+                setSelectedService(null)
               }
             />
-
-            <label>
-              M-PESA Phone Number
-            </label>
-
-            <input
-              type="tel"
-              placeholder="07XXXXXXXX"
-              value={form.phone}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  phone: e.target.value,
-                })
-              }
-            />
-
-            <label>
-              Location
-            </label>
-
-            <input
-              type="text"
-              placeholder="e.g. Nakuru Town"
-              value={form.location}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  location: e.target.value,
-                })
-              }
-            />
-
-            <button
-              className="mpesa-button"
-              onClick={handlePayment}
-            >
-              Pay KSh{" "}
-              {selectedService.price.toLocaleString()}{" "}
-              via M-PESA
-            </button>
-
-            {paymentStatus && (
-
-              <div className="payment-status">
-                {paymentStatus}
-              </div>
-
-            )}
-
-            <p className="secure-payment">
-              🔒 Secure M-PESA payment
-            </p>
 
           </div>
 
@@ -686,22 +542,19 @@ export default function Home() {
       <footer>
 
         <div>
-
           <img
             src="/images/logo.svg"
             alt="Dr Doi Technologies"
           />
-
         </div>
 
         <p>
-          © {new Date().getFullYear()}
-          {" "}Dr Doi Technologies.
-          All rights reserved.
+          © {new Date().getFullYear()} Dr Doi
+          Technologies. All rights reserved.
         </p>
 
       </footer>
 
     </main>
   );
-                }
+        }

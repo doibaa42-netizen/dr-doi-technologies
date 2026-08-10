@@ -1,626 +1,720 @@
 "use client";
 
-import { useState } from "react";
-import BookingForm from "../components/BookingForm";
+import { FormEvent, useEffect, useState } from "react";
 
-type Service = {
-  name: string;
-  description: string;
-  price: number;
+const services = {
+Troubleshooting: [
+"Electrical Fault Diagnosis",
+"Appliance Troubleshooting",
+"Wiring Fault Troubleshooting",
+"Power Supply Troubleshooting",
+],
+
+"Electrical Services": [
+"House Wiring",
+"Electrical Installation",
+"Socket & Switch Installation",
+"Lighting Installation",
+"DB & Distribution Board Work",
+"MCB & Breaker Replacement",
+"Electrical Maintenance",
+],
+
+"Solar Solutions": [
+"Solar System Installation",
+"Solar System Design",
+"Inverter Installation",
+"Battery Installation",
+"Solar Maintenance",
+"Solar Fault Diagnosis",
+"Solar Water Heater Service",
+],
+
+Electronics: [
+"Electronic Equipment Troubleshooting",
+"Power Supply Repair",
+"Circuit Diagnosis",
+"Component Replacement",
+"Audio Equipment Repair",
+"Electronic Maintenance",
+"TV Troubleshooting",
+],
+
+"ICT & Networking": [
+"Wi-Fi Installation",
+"Ethernet Network Installation",
+"Router Configuration",
+"LAN Installation",
+"Network Troubleshooting",
+"Network Maintenance",
+"Computer Troubleshooting",
+],
+
+"Solar Water Heaters": [
+"Solar Water Heater Installation",
+"System Inspection",
+"Leak Troubleshooting",
+"Controller Installation",
+"Heating Element Replacement",
+"Maintenance",
+],
+
+"Air Conditioning": [
+"AC Installation",
+"AC Servicing",
+"AC Cleaning",
+"AC Troubleshooting",
+"Electrical Fault Diagnosis",
+"AC Maintenance",
+],
+
+Refrigeration: [
+"Refrigerator Repair",
+"Freezer Repair",
+"Cooling Fault Diagnosis",
+"Electrical Troubleshooting",
+"Thermostat Replacement",
+"Refrigeration Maintenance",
+],
+
+"CCTV & Security": [
+"CCTV Camera Installation",
+"DVR/NVR Configuration",
+"Remote CCTV Viewing",
+"Camera Troubleshooting",
+"Security System Maintenance",
+],
+
+"Computers & IT": [
+"Computer Troubleshooting",
+"Windows Installation",
+"Software Installation",
+"Computer Maintenance",
+"Hardware Diagnosis",
+"IT Support",
+],
+
+Printers: [
+"Printer Installation",
+"Printer Troubleshooting",
+"Network Printer Setup",
+"Driver Installation",
+"Printer Maintenance",
+],
+
+Plumbing: [
+"Pipe Installation",
+"Leak Repair",
+"Tap Installation",
+"Water System Troubleshooting",
+"Drainage Troubleshooting",
+"Plumbing Maintenance",
+],
+
+"Welding & Fabrication": [
+"Metal Welding",
+"Gate Fabrication",
+"Door Fabrication",
+"Metal Repairs",
+"Frame Fabrication",
+"General Fabrication",
+],
+
+"General Troubleshooting": [
+"Electrical Fault Diagnosis",
+"Electronic Fault Diagnosis",
+"Appliance Troubleshooting",
+"Dispenser Troubleshooting",
+"Power-Related Faults",
+"Equipment Inspection",
+],
 };
 
-type ServiceGroup = {
-  title: string;
-  icon: string;
-  description: string;
-  services: Service[];
+type ServiceCategory = keyof typeof services;
+
+type Package = {
+name: string;
+price: number;
+description: string;
 };
 
-const serviceGroups: ServiceGroup[] = [
-  {
-    title: "Troubleshooting",
-    icon: "🔧",
-    description:
-      "Diagnose and repair electrical and technology faults.",
-    services: [
-      {
-        name: "Electrical Fault Diagnosis",
-        description:
-          "Find and diagnose electrical faults, short circuits and power problems.",
-        price: 0,
-      },
-      {
-        name: "Appliance Troubleshooting",
-        description:
-          "Diagnosis of faulty household electrical appliances.",
-        price: 0,
-      },
-      {
-        name: "Wiring Fault Troubleshooting",
-        description:
-          "Identify faulty wiring, loose connections and electrical faults.",
-        price: 0,
-      },
-      {
-        name: "Power Supply Troubleshooting",
-        description:
-          "Diagnose power supply, breaker and voltage problems.",
-        price: 0,
-      },
-    ],
-  },
-
-  {
-    title: "Electrical Services",
-    icon: "⚡",
-    description:
-      "Professional electrical installation and maintenance.",
-    services: [
-      {
-        name: "House Wiring",
-        description:
-          "Electrical wiring for homes, offices and buildings.",
-        price: 0,
-      },
-      {
-        name: "Electrical Installation",
-        description:
-          "Professional electrical installation services.",
-        price: 0,
-      },
-      {
-        name: "Socket & Switch Installation",
-        description:
-          "Installation and replacement of sockets and switches.",
-        price: 0,
-      },
-      {
-        name: "Lighting Installation",
-        description:
-          "Indoor and outdoor lighting installation.",
-        price: 0,
-      },
-      {
-        name: "DB & Distribution Board Work",
-        description:
-          "Distribution board installation, upgrades and maintenance.",
-        price: 0,
-      },
-      {
-        name: "MCB & Breaker Replacement",
-        description:
-          "Replacement and installation of electrical breakers.",
-        price: 0,
-      },
-      {
-        name: "Electrical Maintenance",
-        description:
-          "Routine electrical inspection and maintenance.",
-        price: 0,
-      },
-    ],
-  },
-
-  {
-    title: "Solar Solutions",
-    icon: "☀️",
-    description:
-      "Professional solar energy installation and support.",
-    services: [
-      {
-        name: "Solar System Installation",
-        description:
-          "Installation of residential and commercial solar systems.",
-        price: 0,
-      },
-      {
-        name: "Solar System Design",
-        description:
-          "Solar system sizing and design.",
-        price: 0,
-      },
-      {
-        name: "Inverter Installation",
-        description:
-          "Professional inverter installation and configuration.",
-        price: 0,
-      },
-      {
-        name: "Battery Installation",
-        description:
-          "Solar battery installation and connection.",
-        price: 0,
-      },
-      {
-        name: "Solar Maintenance",
-        description:
-          "Inspection, servicing and maintenance of solar systems.",
-        price: 0,
-      },
-      {
-        name: "Solar Fault Diagnosis",
-        description:
-          "Troubleshooting panels, batteries, controllers and inverters.",
-        price: 0,
-      },
-    ],
-  },
-
-  {
-    title: "Electronics",
-    icon: "🔌",
-    description:
-      "Electronics repair, testing and maintenance.",
-    services: [
-      {
-        name: "Electronic Equipment Troubleshooting",
-        description:
-          "Diagnosis of faulty electronic equipment.",
-        price: 0,
-      },
-      {
-        name: "Power Supply Repair",
-        description:
-          "Testing and repair of electronic power supplies.",
-        price: 0,
-      },
-      {
-        name: "Circuit Diagnosis",
-        description:
-          "Professional electronic circuit diagnosis.",
-        price: 0,
-      },
-      {
-        name: "Component Replacement",
-        description:
-          "Replacement of faulty electronic components.",
-        price: 0,
-      },
-      {
-        name: "Audio Equipment Repair",
-        description:
-          "Repair and maintenance of audio equipment.",
-        price: 0,
-      },
-    ],
-  },
-
-  {
-    title: "ICT & Networking",
-    icon: "🌐",
-    description:
-      "Networking, Wi-Fi, computer and technology solutions.",
-    services: [
-      {
-        name: "Wi-Fi Installation",
-        description:
-          "Router configuration and Wi-Fi network installation.",
-        price: 0,
-      },
-      {
-        name: "Ethernet Network Installation",
-        description:
-          "Structured Ethernet cabling and network setup.",
-        price: 0,
-      },
-      {
-        name: "Router Configuration",
-        description:
-          "Router setup, configuration and troubleshooting.",
-        price: 0,
-      },
-      {
-        name: "Computer Troubleshooting",
-        description:
-          "Diagnosis of software and hardware computer problems.",
-        price: 0,
-      },
-      {
-        name: "Network Troubleshooting",
-        description:
-          "Diagnosis and repair of network problems.",
-        price: 0,
-      },
-    ],
-  },
+const packages: Package[] = [
+{
+name: "Basic",
+price: 1500,
+description:
+"Basic inspection, diagnosis and initial service.",
+},
+{
+name: "Standard",
+price: 3500,
+description:
+"Professional service, repair or installation.",
+},
+{
+name: "Premium",
+price: 7500,
+description:
+"Complete professional service with priority support.",
+},
 ];
 
-function getBookingCategory(
-  category: string
-): string {
-  const categoryMap: Record<string, string> = {
-    Troubleshooting: "General Troubleshooting",
-    "Electrical Services": "Electrical Services",
-    "Solar Solutions": "Solar Energy",
-    Electronics: "Electronics",
-    "ICT & Networking": "Networking & Wi-Fi",
-  };
+type Props = {
+initialService?: string;
+initialSpecificService?: string;
+onClose?: () => void;
+};
 
-  return categoryMap[category] || category;
+export default function BookingForm({
+initialService = "",
+initialSpecificService = "",
+onClose,
+}: Props) {
+const [name, setName] = useState("");
+const [phone, setPhone] = useState("");
+const [location, setLocation] = useState("");
+
+const [service, setService] =
+useState(initialService);
+
+const [specificService, setSpecificService] =
+useState(initialSpecificService);
+
+const [selectedPackage, setSelectedPackage] =
+useState("");
+
+const [description, setDescription] =
+useState("");
+
+const [loading, setLoading] =
+useState(false);
+
+const [error, setError] =
+useState("");
+
+const [success, setSuccess] =
+useState(false);
+
+const [reference, setReference] =
+useState("");
+
+/*
+
+* Keep the form synchronized with the
+* service selected from the homepage.
+  */
+  useEffect(() => {
+  setService(initialService);
+  }, [initialService]);
+
+useEffect(() => {
+setSpecificService(initialSpecificService);
+}, [initialSpecificService]);
+
+const selectedServices =
+service &&
+service in services
+? services[
+service as ServiceCategory
+]
+: [];
+
+const selectedPackageData =
+packages.find(
+(item) =>
+item.name === selectedPackage
+);
+
+async function submitBooking(
+event: FormEvent<HTMLFormElement>
+) {
+event.preventDefault();
+
+setError("");
+
+if (!name.trim()) {
+  setError("Please enter your name.");
+  return;
 }
 
-export default function Home() {
-  const [selectedGroup, setSelectedGroup] =
-    useState<ServiceGroup | null>(null);
+if (!phone.trim()) {
+  setError(
+    "Please enter your phone number."
+  );
+  return;
+}
 
-  const [selectedService, setSelectedService] =
-    useState<Service | null>(null);
+if (!location.trim()) {
+  setError(
+    "Please enter your location."
+  );
+  return;
+}
 
-  const [bookingCategory, setBookingCategory] =
-    useState("");
+if (!service) {
+  setError(
+    "Please select a service category."
+  );
+  return;
+}
 
-  const openGroup = (group: ServiceGroup) => {
-    setSelectedGroup(group);
-  };
+if (!specificService) {
+  setError(
+    "Please select a specific service."
+  );
+  return;
+}
 
-  const chooseService = (
-    group: ServiceGroup,
-    service: Service
-  ) => {
-    setSelectedService(service);
+if (!selectedPackage) {
+  setError(
+    "Please select a service package."
+  );
+  return;
+}
 
-    setBookingCategory(
-      getBookingCategory(group.title)
+setLoading(true);
+
+try {
+  const response = await fetch(
+    "/api/bookings",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        phone,
+        location,
+        service,
+        requestedService:
+          specificService,
+        package:
+          selectedPackage,
+        amount:
+          selectedPackageData?.price,
+        description,
+      }),
+    }
+  );
+
+  const data =
+    await response.json();
+
+  if (
+    !response.ok ||
+    !data.success
+  ) {
+    throw new Error(
+      data.message ||
+        "Booking submission failed."
     );
+  }
 
-    setSelectedGroup(null);
-  };
+  setReference(
+    data.booking
+      ?.bookingReference ||
+      "BOOKING RECEIVED"
+  );
 
-  const closeBooking = () => {
-    setSelectedService(null);
-    setBookingCategory("");
-  };
+  setSuccess(true);
+} catch (err) {
+  setError(
+    err instanceof Error
+      ? err.message
+      : "Unable to submit booking."
+  );
+} finally {
+  setLoading(false);
+}
 
-  return (
-    <main>
+}
 
-      {/* LIVE BACKGROUND */}
+if (success) {
+return (
+<div className="booking-success">
 
-      <div className="live-background">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <div className="success-icon">
+      ✓
+    </div>
 
-      {/* NAVBAR */}
+    <span className="modal-label">
+      BOOKING RECEIVED
+    </span>
 
-      <header className="navbar">
+    <h2>
+      Thank You, {name}!
+    </h2>
 
-        <div className="nav-logo">
-          <img
-            src="/images/logo.svg"
-            alt="Dr Doi Technologies"
-          />
-        </div>
+    <p>
+      Your service request has
+      successfully been received.
+    </p>
 
-        <nav>
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#contact">Contact</a>
-        </nav>
+    <div className="booking-reference">
 
-        <a
-          href="#services"
-          className="nav-button"
-        >
-          Book a Service
-        </a>
+      <small>
+        BOOKING REFERENCE
+      </small>
 
-      </header>
+      <strong>
+        {reference}
+      </strong>
 
-      {/* HERO */}
+    </div>
 
-      <section
-        className="hero"
-        id="home"
-      >
+    <div className="booking-summary">
 
-        <div className="hero-content">
+      <p>
+        <strong>
+          Category:
+        </strong>{" "}
+        {service}
+      </p>
 
-          <p className="eyebrow">
-            PROFESSIONAL TECHNOLOGY SERVICES
-          </p>
+      <p>
+        <strong>
+          Service:
+        </strong>{" "}
+        {specificService}
+      </p>
 
-          <h1>
-            Smart Electrical &
-            <br />
-            Technology Solutions
-          </h1>
+      <p>
+        <strong>
+          Package:
+        </strong>{" "}
+        {selectedPackage}
+      </p>
 
-          <p className="hero-text">
-            Reliable electrical, electronics,
-            solar, networking and technology
-            services in Nakuru and beyond.
-          </p>
+      <p>
+        <strong>
+          Estimated Fee:
+        </strong>{" "}
+        KSh{" "}
+        {selectedPackageData?.price.toLocaleString()}
+      </p>
 
-          <div className="hero-buttons">
+    </div>
 
-            <a
-              href="#services"
-              className="primary-button"
-            >
-              Book a Service
-            </a>
+    <a
+      href={`https://wa.me/254114280995?text=${encodeURIComponent(
+        `Hello Dr Doi Technologies. I have submitted booking ${reference}. Category: ${service}. Service: ${specificService}. Package: ${selectedPackage}. Estimated fee: KSh ${selectedPackageData?.price}.`
+      )}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="whatsapp-button"
+    >
+      📱 Continue on WhatsApp
+    </a>
 
-            <a
-              href="#services"
-              className="secondary-button"
-            >
-              Our Services
-            </a>
+    <button
+      type="button"
+      className="close-booking-button"
+      onClick={onClose}
+    >
+      Close
+    </button>
 
-          </div>
+  </div>
+);
 
-        </div>
+}
 
-      </section>
+return (
+<form
+className="booking-form"
+onSubmit={submitBooking}
+>
 
-      {/* ABOUT */}
+  <div className="booking-header">
 
-      <section
-        className="about"
-        id="about"
-      >
+    <span className="modal-label">
+      DR DOI TECHNOLOGIES
+    </span>
 
-        <p className="eyebrow">
-          ABOUT US
-        </p>
+    <h2>
+      Book a Service
+    </h2>
 
-        <h2>
-          Dr Doi Technologies
-        </h2>
+    <p>
+      Complete the form below to
+      request professional service.
+    </p>
 
-        <p>
-          We provide professional electrical,
-          electronics, solar, ICT and networking
-          solutions for homes, businesses and
-          institutions.
-        </p>
+  </div>
 
-        <div className="about-grid">
+  {error && (
+    <div className="booking-error">
+      {error}
+    </div>
+  )}
 
-          <div>
-            <strong>⚡</strong>
-            <h3>Professional</h3>
-            <p>
-              Reliable technical solutions.
-            </p>
-          </div>
+  {/* CUSTOMER DETAILS */}
 
-          <div>
-            <strong>🛠️</strong>
-            <h3>Reliable</h3>
-            <p>
-              Quality service and support.
-            </p>
-          </div>
+  <div className="form-grid">
 
-          <div>
-            <strong>📍</strong>
-            <h3>Nakuru</h3>
-            <p>
-              Serving Nakuru and beyond.
-            </p>
-          </div>
+    <div className="form-group">
 
-        </div>
+      <label>
+        Full Name *
+      </label>
 
-      </section>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) =>
+          setName(e.target.value)
+        }
+        placeholder="Enter your full name"
+        required
+      />
 
-      {/* SERVICES */}
+    </div>
 
-      <section
-        className="services-section"
-        id="services"
-      >
+    <div className="form-group">
 
-        <div className="section-heading">
+      <label>
+        Phone Number *
+      </label>
 
-          <p className="eyebrow">
-            OUR SERVICES
-          </p>
+      <input
+        type="tel"
+        value={phone}
+        onChange={(e) =>
+          setPhone(e.target.value)
+        }
+        placeholder="0712345678"
+        required
+      />
 
-          <h2>
-            Choose a Service Category
-          </h2>
+    </div>
 
-          <p>
-            Tap a category below to view
-            the specific services available.
-          </p>
+  </div>
 
-        </div>
+  <div className="form-group">
 
-        <div className="service-grid">
+    <label>
+      Location *
+    </label>
 
-          {serviceGroups.map((group) => (
+    <input
+      type="text"
+      value={location}
+      onChange={(e) =>
+        setLocation(e.target.value)
+      }
+      placeholder="e.g. Nakuru, Lanet"
+      required
+    />
 
-            <button
-              className="service-card"
-              key={group.title}
-              onClick={() =>
-                openGroup(group)
-              }
-            >
+  </div>
 
-              <span className="service-icon">
-                {group.icon}
-              </span>
+  {/* CATEGORY */}
 
-              <h3>
-                {group.title}
-              </h3>
+  <div className="form-group">
 
-              <p>
-                {group.description}
-              </p>
+    <label>
+      Service Category *
+    </label>
 
-              <span className="view-services">
-                View Services →
-              </span>
+    <select
+      value={service}
+      onChange={(e) => {
+        setService(e.target.value);
+        setSpecificService("");
+      }}
+      required
+    >
 
-            </button>
+      <option value="">
+        Select a service category
+      </option>
 
-          ))}
+      {Object.keys(services).map(
+        (category) => (
 
-        </div>
+          <option
+            key={category}
+            value={category}
+          >
+            {category}
+          </option>
 
-      </section>
+        )
+      )}
 
-      {/* SERVICE LIST MODAL */}
+    </select>
 
-      {selectedGroup && (
+  </div>
 
-        <div className="modal-overlay">
+  {/* SPECIFIC SERVICE */}
 
-          <div className="service-modal">
+  <div className="form-group">
 
-            <button
-              className="close-button"
-              onClick={() =>
-                setSelectedGroup(null)
-              }
-            >
-              ×
-            </button>
+    <label>
+      Specific Service *
+    </label>
 
-            <span className="modal-icon">
-              {selectedGroup.icon}
+    <select
+      value={specificService}
+      onChange={(e) =>
+        setSpecificService(
+          e.target.value
+        )
+      }
+      disabled={!service}
+      required
+    >
+
+      <option value="">
+        {service
+          ? "Select a specific service"
+          : "Select a category first"}
+      </option>
+
+      {selectedServices.map(
+        (item) => (
+
+          <option
+            key={item}
+            value={item}
+          >
+            {item}
+          </option>
+
+        )
+      )}
+
+    </select>
+
+  </div>
+
+  {/* PACKAGES */}
+
+  <div className="form-group">
+
+    <label>
+      Choose Service Package *
+    </label>
+
+    <div className="package-grid">
+
+      {packages.map(
+        (item) => (
+
+          <button
+            key={item.name}
+            type="button"
+            className={`package-card ${
+              selectedPackage ===
+              item.name
+                ? "package-selected"
+                : ""
+            }`}
+            onClick={() =>
+              setSelectedPackage(
+                item.name
+              )
+            }
+          >
+
+            <span className="package-name">
+              {item.name}
             </span>
 
-            <h2>
-              {selectedGroup.title}
-            </h2>
+            <strong className="package-price">
+              KSh{" "}
+              {item.price.toLocaleString()}
+            </strong>
 
-            <p>
-              {selectedGroup.description}
-            </p>
+            <span className="package-description">
+              {item.description}
+            </span>
 
-            <div className="specific-services">
+            {selectedPackage ===
+              item.name && (
 
-              {selectedGroup.services.map(
-                (service) => (
+              <span className="package-check">
+                ✓ Selected
+              </span>
 
-                  <button
-                    key={service.name}
-                    className="specific-service"
-                    onClick={() =>
-                      chooseService(
-                        selectedGroup,
-                        service
-                      )
-                    }
-                  >
+            )}
 
-                    <div>
+          </button>
 
-                      <strong>
-                        {service.name}
-                      </strong>
-
-                      <span>
-                        {service.description}
-                      </span>
-
-                    </div>
-
-                    <b>
-                      View Packages →
-                    </b>
-
-                  </button>
-
-                )
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
-
+        )
       )}
 
-      {/* BOOKING FORM */}
+    </div>
 
-      {selectedService && (
+  </div>
 
-        <div className="modal-overlay">
+  {/* SELECTED PACKAGE */}
 
-          <div className="booking-modal">
+  {selectedPackageData && (
 
-            <button
-              className="close-button"
-              onClick={closeBooking}
-            >
-              ×
-            </button>
+    <div className="selected-package">
 
-            <BookingForm
-              initialService={bookingCategory}
-              onClose={closeBooking}
-            />
+      <span>
+        Selected Package
+      </span>
 
-          </div>
+      <strong>
+        {selectedPackageData.name}
+        {" — "}
+        KSh{" "}
+        {selectedPackageData.price.toLocaleString()}
+      </strong>
 
-        </div>
+    </div>
 
-      )}
+  )}
 
-      {/* CONTACT */}
+  {/* DESCRIPTION */}
 
-      <section
-        className="contact"
-        id="contact"
-      >
+  <div className="form-group">
 
-        <p className="eyebrow">
-          GET IN TOUCH
-        </p>
+    <label>
+      Describe the Problem
+    </label>
 
-        <h2>
-          Need a Technical Solution?
-        </h2>
+    <textarea
+      value={description}
+      onChange={(e) =>
+        setDescription(
+          e.target.value
+        )
+      }
+      placeholder="Describe what you need..."
+      rows={5}
+      maxLength={1000}
+    />
 
-        <p>
-          Contact Dr Doi Technologies for
-          electrical, electronics, solar,
-          networking and technology services.
-        </p>
+    <small>
+      {description.length}/1000
+    </small>
 
-        <a
-          href="https://wa.me/254114280995"
-          className="whatsapp-button"
-        >
-          WhatsApp Us
-        </a>
+  </div>
 
-      </section>
+  <div className="booking-notice">
+    🔒 Your information is used only
+    to process your booking.
+  </div>
 
-      {/* FOOTER */}
+  <button
+    type="submit"
+    className="submit-booking"
+    disabled={loading}
+  >
 
-      <footer>
+    {loading
+      ? "Submitting..."
+      : "Submit Booking →"}
 
-        <div>
-          <img
-            src="/images/logo.svg"
-            alt="Dr Doi Technologies"
-          />
-        </div>
+  </button>
 
-        <p>
-          © {new Date().getFullYear()} Dr Doi
-          Technologies. All rights reserved.
-        </p>
+</form>
 
-      </footer>
-
-    </main>
-  );
-              }
+);
+}

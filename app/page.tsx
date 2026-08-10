@@ -1,33 +1,265 @@
-import Navbar from "./components/Navbar";
-import "./page.css";
+"use client";
+
+import { useState } from "react";
+
+type Service = {
+  name: string;
+  description: string;
+  price: number;
+};
+
+const serviceGroups = [
+  {
+    title: "Troubleshooting",
+    icon: "🔧",
+    description: "Diagnose and repair electrical and technology faults.",
+    services: [
+      {
+        name: "Electrical Fault Diagnosis",
+        description: "Find and diagnose electrical faults, short circuits and power problems.",
+        price: 500,
+      },
+      {
+        name: "Appliance Troubleshooting",
+        description: "Diagnosis of faulty household electrical appliances.",
+        price: 500,
+      },
+      {
+        name: "Wiring Fault Troubleshooting",
+        description: "Identify faulty wiring, loose connections and electrical faults.",
+        price: 700,
+      },
+      {
+        name: "Power Supply Troubleshooting",
+        description: "Diagnose power supply, breaker and voltage problems.",
+        price: 500,
+      },
+    ],
+  },
+  {
+    title: "Electrical Services",
+    icon: "⚡",
+    description: "Professional electrical installation and maintenance.",
+    services: [
+      {
+        name: "House Wiring",
+        description: "Electrical wiring for homes, offices and buildings.",
+        price: 1500,
+      },
+      {
+        name: "Socket & Switch Installation",
+        description: "Installation and replacement of sockets and switches.",
+        price: 500,
+      },
+      {
+        name: "Lighting Installation",
+        description: "Indoor and outdoor lighting installation.",
+        price: 500,
+      },
+      {
+        name: "Electrical Maintenance",
+        description: "Routine electrical inspection and maintenance.",
+        price: 1000,
+      },
+    ],
+  },
+  {
+    title: "Solar Solutions",
+    icon: "☀️",
+    description: "Affordable solar energy installation and support.",
+    services: [
+      {
+        name: "Solar System Installation",
+        description: "Installation of residential and small commercial solar systems.",
+        price: 3000,
+      },
+      {
+        name: "Solar Maintenance",
+        description: "Inspection, servicing and maintenance of solar systems.",
+        price: 1000,
+      },
+      {
+        name: "Solar Fault Diagnosis",
+        description: "Troubleshooting solar panels, controllers, batteries and inverters.",
+        price: 1000,
+      },
+      {
+        name: "Solar Water Heater Service",
+        description: "Installation and maintenance of solar water heating systems.",
+        price: 2000,
+      },
+    ],
+  },
+  {
+    title: "Electronics",
+    icon: "🔌",
+    description: "Electronics repair, testing and maintenance.",
+    services: [
+      {
+        name: "TV Troubleshooting",
+        description: "Diagnosis and repair of common television faults.",
+        price: 700,
+      },
+      {
+        name: "Power Supply Repair",
+        description: "Testing and repair of electronic power supply systems.",
+        price: 700,
+      },
+      {
+        name: "Electronic Circuit Repair",
+        description: "Diagnosis and repair of electronic circuit boards.",
+        price: 1000,
+      },
+      {
+        name: "Electronic Device Diagnosis",
+        description: "Professional diagnosis of faulty electronic devices.",
+        price: 500,
+      },
+    ],
+  },
+  {
+    title: "ICT & Networking",
+    icon: "🌐",
+    description: "Networking, Wi-Fi, computer and technology solutions.",
+    services: [
+      {
+        name: "Wi-Fi Installation",
+        description: "Router configuration and Wi-Fi network installation.",
+        price: 1000,
+      },
+      {
+        name: "Ethernet Network Installation",
+        description: "Structured Ethernet cabling and network setup.",
+        price: 1500,
+      },
+      {
+        name: "Router Configuration",
+        description: "Router setup, configuration and troubleshooting.",
+        price: 700,
+      },
+      {
+        name: "Computer Troubleshooting",
+        description: "Diagnosis of software and hardware computer problems.",
+        price: 700,
+      },
+    ],
+  },
+];
 
 export default function Home() {
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    location: "",
+  });
+
+  const [paymentStatus, setPaymentStatus] = useState("");
+
+  const openGroup = (group: any) => {
+    setSelectedGroup(group);
+  };
+
+  const chooseService = (service: Service) => {
+    setSelectedService(service);
+    setPaymentStatus("");
+  };
+
+  const handlePayment = async () => {
+    if (!selectedService) return;
+
+    if (!form.name || !form.phone || !form.location) {
+      setPaymentStatus("Please fill in all booking details.");
+      return;
+    }
+
+    setPaymentStatus("Sending M-PESA payment request...");
+
+    try {
+      const response = await fetch("/api/mpesa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: selectedService.price,
+          phone: form.phone,
+          name: form.name,
+          service: selectedService.name,
+          location: form.location,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPaymentStatus(
+          data.message ||
+            "Payment request sent. Check your phone and enter your M-PESA PIN."
+        );
+      } else {
+        setPaymentStatus(
+          data.error || "Unable to initiate payment. Please try again."
+        );
+      }
+    } catch {
+      setPaymentStatus(
+        "Connection error. Please check your internet connection and try again."
+      );
+    }
+  };
+
   return (
     <main>
+      {/* LIVE BACKGROUND */}
+      <div className="live-background">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
 
-      <Navbar />
+      {/* NAVBAR */}
+      <header className="navbar">
+        <div className="nav-logo">
+          <img src="/images/logo.svg" alt="Dr Doi Technologies" />
+        </div>
+
+        <nav>
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <a href="#services" className="nav-button">
+          Book a Service
+        </a>
+      </header>
 
       {/* HERO */}
-      <section id="home" className="hero">
+      <section className="hero" id="home">
         <div className="hero-content">
-
-          <p className="eyebrow">
-            PROFESSIONAL TECHNOLOGY SERVICES
-          </p>
+          <p className="eyebrow">PROFESSIONAL TECHNOLOGY SERVICES</p>
 
           <h1>
-            Smart Electrical &amp;
-            <br />
+            Smart Electrical &<br />
             Technology Solutions
           </h1>
 
-          <p className="hero-description">
-            Reliable electrical, electronics, solar, networking
-            and technology services in Nakuru and beyond.
+          <p className="hero-text">
+            Reliable electrical, electronics, solar, networking and technology
+            services in Nakuru and beyond.
           </p>
 
           <div className="hero-buttons">
-            <a href="#booking" className="primary-button">
+            <a href="#services" className="primary-button">
               Book a Service
             </a>
 
@@ -35,187 +267,212 @@ export default function Home() {
               Our Services
             </a>
           </div>
-
         </div>
       </section>
-
 
       {/* ABOUT */}
-      <section id="about" className="section about-section">
+      <section className="about" id="about">
+        <p className="eyebrow">ABOUT US</p>
 
-        <p className="section-label">
-          ABOUT US
-        </p>
-
-        <h2>
-          Dr Doi Technologies
-        </h2>
+        <h2>Dr Doi Technologies</h2>
 
         <p>
-          Dr Doi Technologies provides professional electrical,
-          electronics, solar, networking and ICT solutions for
-          homes, businesses and organizations in Nakuru and
-          surrounding areas.
+          We provide professional electrical, electronics, solar, ICT and
+          networking solutions for homes, businesses and institutions.
         </p>
 
-        <p>
-          Our goal is to provide reliable, affordable and
-          innovative technology solutions that solve real-world
-          problems.
-        </p>
+        <div className="about-grid">
+          <div>
+            <strong>⚡</strong>
+            <h3>Professional</h3>
+            <p>Reliable technical solutions.</p>
+          </div>
 
+          <div>
+            <strong>🛠️</strong>
+            <h3>Reliable</h3>
+            <p>Quality service and support.</p>
+          </div>
+
+          <div>
+            <strong>📍</strong>
+            <h3>Nakuru</h3>
+            <p>Serving Nakuru and beyond.</p>
+          </div>
+        </div>
       </section>
-
 
       {/* SERVICES */}
-      <section id="services" className="section services-section">
+      <section className="services-section" id="services">
+        <div className="section-heading">
+          <p className="eyebrow">OUR SERVICES</p>
 
-        <p className="section-label">
-          OUR SERVICES
-        </p>
-
-        <h2>
-          What We Do
-        </h2>
-
-        <div className="services-grid">
-
-          <div className="service-card">
-            <div className="service-icon">⚡</div>
-            <h3>Electrical Services</h3>
-            <p>
-              Electrical installation, maintenance,
-              troubleshooting and repair services.
-            </p>
-          </div>
-
-          <div className="service-card">
-            <div className="service-icon">☀️</div>
-            <h3>Solar Solutions</h3>
-            <p>
-              Solar installation, maintenance and
-              energy solutions for homes and businesses.
-            </p>
-          </div>
-
-          <div className="service-card">
-            <div className="service-icon">🔌</div>
-            <h3>Electronics Repair</h3>
-            <p>
-              Diagnosis, repair and maintenance of
-              electronic equipment and systems.
-            </p>
-          </div>
-
-          <div className="service-card">
-            <div className="service-icon">🌐</div>
-            <h3>Networking &amp; ICT</h3>
-            <p>
-              Wi-Fi, Ethernet networking, computer
-              and ICT installation services.
-            </p>
-          </div>
-
-          <div className="service-card">
-            <div className="service-icon">🛠️</div>
-            <h3>Technology Solutions</h3>
-            <p>
-              Smart technology, automation and
-              customized technology solutions.
-            </p>
-          </div>
-
-          <div className="service-card">
-            <div className="service-icon">🔧</div>
-            <h3>Maintenance &amp; Repair</h3>
-            <p>
-              Professional troubleshooting and
-              maintenance for electrical and technology systems.
-            </p>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* BOOKING */}
-      <section id="booking" className="booking-section">
-
-        <div className="booking-content">
-
-          <p className="section-label">
-            NEED OUR SERVICES?
-          </p>
-
-          <h2>
-            Book a Service Today
-          </h2>
+          <h2>Choose a Service Category</h2>
 
           <p>
-            Contact Dr Doi Technologies for reliable
-            electrical, solar, electronics and ICT services.
+            Tap a category below to view the specific services available.
           </p>
-
-          <a
-            href="https://wa.me/254114280995?text=Hello%20Dr%20Doi%20Technologies%2C%20I%20would%20like%20to%20book%20a%20service."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="primary-button"
-          >
-            Book via WhatsApp
-          </a>
-
         </div>
 
+        <div className="service-grid">
+          {serviceGroups.map((group) => (
+            <button
+              className="service-card"
+              key={group.title}
+              onClick={() => openGroup(group)}
+            >
+              <span className="service-icon">{group.icon}</span>
+
+              <h3>{group.title}</h3>
+
+              <p>{group.description}</p>
+
+              <span className="view-services">
+                View Services →
+              </span>
+            </button>
+          ))}
+        </div>
       </section>
 
+      {/* SERVICE LIST MODAL */}
+      {selectedGroup && (
+        <div className="modal-overlay">
+          <div className="service-modal">
+            <button
+              className="close-button"
+              onClick={() => setSelectedGroup(null)}
+            >
+              ×
+            </button>
+
+            <span className="modal-icon">{selectedGroup.icon}</span>
+
+            <h2>{selectedGroup.title}</h2>
+
+            <p>{selectedGroup.description}</p>
+
+            <div className="specific-services">
+              {selectedGroup.services.map((service: Service) => (
+                <button
+                  key={service.name}
+                  className="specific-service"
+                  onClick={() => chooseService(service)}
+                >
+                  <div>
+                    <strong>{service.name}</strong>
+                    <span>{service.description}</span>
+                  </div>
+
+                  <b>KSh {service.price.toLocaleString()}</b>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BOOKING + PAYMENT */}
+      {selectedService && (
+        <div className="modal-overlay">
+          <div className="booking-modal">
+            <button
+              className="close-button"
+              onClick={() => setSelectedService(null)}
+            >
+              ×
+            </button>
+
+            <p className="eyebrow">BOOK SERVICE</p>
+
+            <h2>{selectedService.name}</h2>
+
+            <p>{selectedService.description}</p>
+
+            <div className="price-box">
+              <span>Service Fee</span>
+              <strong>
+                KSh {selectedService.price.toLocaleString()}
+              </strong>
+            </div>
+
+            <label>Your Name</label>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={form.name}
+              onChange={(e) =>
+                setForm({ ...form, name: e.target.value })
+              }
+            />
+
+            <label>M-PESA Phone Number</label>
+            <input
+              type="tel"
+              placeholder="07XXXXXXXX"
+              value={form.phone}
+              onChange={(e) =>
+                setForm({ ...form, phone: e.target.value })
+              }
+            />
+
+            <label>Location</label>
+            <input
+              type="text"
+              placeholder="e.g. Nakuru Town"
+              value={form.location}
+              onChange={(e) =>
+                setForm({ ...form, location: e.target.value })
+              }
+            />
+
+            <button className="mpesa-button" onClick={handlePayment}>
+              Pay KSh {selectedService.price.toLocaleString()} via M-PESA
+            </button>
+
+            {paymentStatus && (
+              <div className="payment-status">
+                {paymentStatus}
+              </div>
+            )}
+
+            <p className="secure-payment">
+              🔒 Secure M-PESA payment
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* CONTACT */}
-      <section id="contact" className="section contact-section">
+      <section className="contact" id="contact">
+        <p className="eyebrow">GET IN TOUCH</p>
 
-        <p className="section-label">
-          CONTACT US
-        </p>
-
-        <h2>
-          Dr Doi Technologies
-        </h2>
+        <h2>Need a Technical Solution?</h2>
 
         <p>
-          Nakuru, Kenya
-        </p>
-
-        <p>
-          Electrical • Electronics • Solar • ICT Solutions
+          Contact Dr Doi Technologies for electrical, electronics, solar,
+          networking and technology services.
         </p>
 
         <a
           href="https://wa.me/254114280995"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="contact-button"
+          className="whatsapp-button"
         >
           WhatsApp Us
         </a>
-
       </section>
 
-
       {/* FOOTER */}
-      <footer className="footer">
+      <footer>
+        <div>
+          <img src="/images/logo.svg" alt="Dr Doi Technologies" />
+        </div>
 
         <p>
-          © {new Date().getFullYear()} Dr Doi Technologies.
-          All rights reserved.
+          © {new Date().getFullYear()} Dr Doi Technologies. All rights
+          reserved.
         </p>
-
-        <p>
-          Electrical • Electronics • Solar • ICT Solutions
-        </p>
-
       </footer>
-
     </main>
   );
-}
+         }

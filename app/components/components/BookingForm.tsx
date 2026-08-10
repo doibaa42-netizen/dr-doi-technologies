@@ -3,207 +3,153 @@
 import { FormEvent, useState } from "react";
 
 const services = {
-  "Electrical Services": [
-    "House wiring",
-    "Electrical installation",
-    "Troubleshooting",
-    "Socket and switch installation",
-    "Lighting installation",
-    "DB and distribution board work",
-    "MCB and breaker replacement",
-    "Electrical maintenance",
-  ],
+  "Electrical Services": {
+    Basic: 5000,
+    Standard: 12000,
+    Premium: 25000,
+  },
 
-  "Solar Energy": [
-    "Solar panel installation",
-    "Solar system design",
-    "Inverter installation",
-    "Battery installation",
-    "Solar troubleshooting",
-    "Solar maintenance",
-    "Solar lighting",
-  ],
+  "Solar Energy": {
+    Basic: 15000,
+    Standard: 30000,
+    Premium: 60000,
+  },
 
-  "Solar Water Heaters": [
-    "Solar water heater installation",
-    "System inspection",
-    "Leak troubleshooting",
-    "Controller installation",
-    "Heating element replacement",
-    "Maintenance",
-  ],
+  "Solar Water Heaters": {
+    Basic: 15000,
+    Standard: 25000,
+    Premium: 40000,
+  },
 
-  "Air Conditioning": [
-    "AC installation",
-    "AC servicing",
-    "AC cleaning",
-    "AC troubleshooting",
-    "Electrical fault diagnosis",
-    "AC maintenance",
-  ],
+  "Air Conditioning": {
+    Basic: 3000,
+    Standard: 6000,
+    Premium: 12000,
+  },
 
-  Refrigeration: [
-    "Refrigerator repair",
-    "Freezer repair",
-    "Cooling fault diagnosis",
-    "Electrical troubleshooting",
-    "Thermostat replacement",
-    "Refrigeration maintenance",
-  ],
+  Refrigeration: {
+    Basic: 3000,
+    Standard: 6000,
+    Premium: 12000,
+  },
 
-  Electronics: [
-    "Electronic equipment troubleshooting",
-    "Power supply repair",
-    "Circuit diagnosis",
-    "Component replacement",
-    "Audio equipment repair",
-    "Electronic maintenance",
-  ],
+  Electronics: {
+    Basic: 2000,
+    Standard: 5000,
+    Premium: 10000,
+  },
 
-  "Networking & Wi-Fi": [
-    "Wi-Fi installation",
-    "Router configuration",
-    "LAN installation",
-    "Ethernet cabling",
-    "Network troubleshooting",
-    "Network maintenance",
-  ],
+  "Networking & Wi-Fi": {
+    Basic: 3500,
+    Standard: 8000,
+    Premium: 20000,
+  },
 
-  "CCTV & Security": [
-    "CCTV camera installation",
-    "DVR/NVR configuration",
-    "Remote CCTV viewing",
-    "Camera troubleshooting",
-    "Security system maintenance",
-  ],
+  "CCTV & Security": {
+    Basic: 8000,
+    Standard: 20000,
+    Premium: 45000,
+  },
 
-  "Computers & IT": [
-    "Computer troubleshooting",
-    "Windows installation",
-    "Software installation",
-    "Computer maintenance",
-    "Hardware diagnosis",
-    "IT support",
-  ],
+  "Computers & IT": {
+    Basic: 2000,
+    Standard: 5000,
+    Premium: 10000,
+  },
 
-  Printers: [
-    "Printer installation",
-    "Printer troubleshooting",
-    "Network printer setup",
-    "Driver installation",
-    "Printer maintenance",
-  ],
+  Printers: {
+    Basic: 1500,
+    Standard: 3500,
+    Premium: 7500,
+  },
 
-  Plumbing: [
-    "Pipe installation",
-    "Leak repair",
-    "Tap installation",
-    "Water system troubleshooting",
-    "Drainage troubleshooting",
-    "Plumbing maintenance",
-  ],
+  Plumbing: {
+    Basic: 2500,
+    Standard: 6000,
+    Premium: 15000,
+  },
 
-  "Welding & Fabrication": [
-    "Metal welding",
-    "Gate fabrication",
-    "Door fabrication",
-    "Metal repairs",
-    "Frame fabrication",
-    "General fabrication",
-  ],
+  "Welding & Fabrication": {
+    Basic: 5000,
+    Standard: 15000,
+    Premium: 35000,
+  },
 
-  "General Troubleshooting": [
-    "Electrical fault diagnosis",
-    "Electronic fault diagnosis",
-    "Appliance troubleshooting",
-    "Dispenser troubleshooting",
-    "Power-related faults",
-    "Equipment inspection",
-  ],
+  "General Troubleshooting": {
+    Basic: 2500,
+    Standard: 5000,
+    Premium: 10000,
+  },
 };
 
 type ServiceName = keyof typeof services;
+type PackageName = "Basic" | "Standard" | "Premium";
 
 type Props = {
   initialService?: string;
-  initialSpecificService?: string;
   onClose?: () => void;
 };
 
 export default function BookingForm({
   initialService = "",
-  initialSpecificService = "",
   onClose,
 }: Props) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
+  const [service, setService] = useState(initialService);
+  const [packageName, setPackageName] =
+    useState<PackageName | "">("");
+  const [description, setDescription] = useState("");
 
-  const [service, setService] =
-    useState(initialService);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [reference, setReference] = useState("");
 
-  const [specificService, setSpecificService] =
-    useState(initialSpecificService);
-
-  const [description, setDescription] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState(false);
-
-  const [reference, setReference] =
-    useState("");
-
-  const selectedServices =
+  const selectedPricing =
     service && service in services
       ? services[service as ServiceName]
-      : [];
+      : null;
 
   async function submitBooking(
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
+    if (!packageName) {
+      setError("Please select a service package.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch(
-        "/api/bookings",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            phone,
-            location,
-            service,
-            requestedService:
-              specificService,
-            description,
-          }),
-        }
-      );
+      const price =
+        selectedPricing?.[packageName] || 0;
 
-      const data =
-        await response.json();
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          location,
+          service,
+          package: packageName,
+          price,
+          description,
+        }),
+      });
 
-      if (
-        !response.ok ||
-        !data.success
-      ) {
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Booking submission failed."
+          data.message || "Booking submission failed."
         );
       }
 
@@ -227,10 +173,7 @@ export default function BookingForm({
   if (success) {
     return (
       <div className="booking-success">
-
-        <div className="success-icon">
-          ✓
-        </div>
+        <div className="success-icon">✓</div>
 
         <span className="modal-label">
           BOOKING RECEIVED
@@ -246,20 +189,32 @@ export default function BookingForm({
         </p>
 
         <div className="booking-reference">
+          <small>BOOKING REFERENCE</small>
 
-          <small>
-            BOOKING REFERENCE
-          </small>
+          <strong>{reference}</strong>
+        </div>
 
-          <strong>
-            {reference}
-          </strong>
+        <div className="booking-summary">
+          <p>
+            <strong>Service:</strong> {service}
+          </p>
 
+          <p>
+            <strong>Package:</strong> {packageName}
+          </p>
+
+          <p>
+            <strong>Starting Price:</strong>{" "}
+            KSh{" "}
+            {selectedPricing?.[
+              packageName as PackageName
+            ]?.toLocaleString()}
+          </p>
         </div>
 
         <a
           href={`https://wa.me/254114280995?text=${encodeURIComponent(
-            `Hello Dr Doi Technologies. I have submitted booking ${reference} for ${service} - ${specificService}.`
+            `Hello Dr Doi Technologies. I have submitted booking ${reference}. Service: ${service}. Package: ${packageName}.`
           )}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -275,7 +230,6 @@ export default function BookingForm({
         >
           Close
         </button>
-
       </div>
     );
   }
@@ -285,21 +239,16 @@ export default function BookingForm({
       className="booking-form"
       onSubmit={submitBooking}
     >
-
       <div className="booking-header">
-
         <span className="modal-label">
           DR DOI TECHNOLOGIES
         </span>
 
-        <h2>
-          Book a Service
-        </h2>
+        <h2>Book a Service</h2>
 
         <p>
-          Tell us what service you need.
+          Choose your service and preferred package.
         </p>
-
       </div>
 
       {error && (
@@ -308,51 +257,36 @@ export default function BookingForm({
         </div>
       )}
 
-      <div className="form-grid">
+      <div className="form-group">
+        <label>Full Name *</label>
 
-        <div className="form-group">
-
-          <label>
-            Full Name *
-          </label>
-
-          <input
-            type="text"
-            value={name}
-            onChange={(e) =>
-              setName(e.target.value)
-            }
-            placeholder="Enter your full name"
-            required
-          />
-
-        </div>
-
-        <div className="form-group">
-
-          <label>
-            Phone Number *
-          </label>
-
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) =>
-              setPhone(e.target.value)
-            }
-            placeholder="0712345678"
-            required
-          />
-
-        </div>
-
+        <input
+          type="text"
+          value={name}
+          onChange={(e) =>
+            setName(e.target.value)
+          }
+          placeholder="Enter your full name"
+          required
+        />
       </div>
 
       <div className="form-group">
+        <label>Phone Number *</label>
 
-        <label>
-          Location *
-        </label>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) =>
+            setPhone(e.target.value)
+          }
+          placeholder="0712345678"
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Location *</label>
 
         <input
           type="text"
@@ -363,24 +297,19 @@ export default function BookingForm({
           placeholder="e.g. Nakuru, Lanet"
           required
         />
-
       </div>
 
       <div className="form-group">
-
-        <label>
-          Service Category *
-        </label>
+        <label>Service Category *</label>
 
         <select
           value={service}
           onChange={(e) => {
             setService(e.target.value);
-            setSpecificService("");
+            setPackageName("");
           }}
           required
         >
-
           <option value="">
             Select a service
           </option>
@@ -395,52 +324,61 @@ export default function BookingForm({
               </option>
             )
           )}
-
         </select>
-
       </div>
 
-      <div className="form-group">
+      {selectedPricing && (
+        <div className="package-section">
+          <label>Select Package *</label>
 
-        <label>
-          Specific Service *
-        </label>
-
-        <select
-          value={specificService}
-          onChange={(e) =>
-            setSpecificService(
-              e.target.value
-            )
-          }
-          disabled={!service}
-          required
-        >
-
-          <option value="">
-            Select the service
-          </option>
-
-          {selectedServices.map(
-            (item) => (
-              <option
+          <div className="package-grid">
+            {(
+              Object.keys(
+                selectedPricing
+              ) as PackageName[]
+            ).map((item) => (
+              <button
+                type="button"
                 key={item}
-                value={item}
+                className={`package-card ${
+                  packageName === item
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setPackageName(item)
+                }
               >
-                {item}
-              </option>
-            )
-          )}
+                {item === "Standard" && (
+                  <span className="recommended">
+                    RECOMMENDED
+                  </span>
+                )}
 
-        </select>
+                <h3>{item}</h3>
 
-      </div>
+                <strong>
+                  From KSh{" "}
+                  {selectedPricing[
+                    item
+                  ].toLocaleString()}
+                </strong>
+
+                <p>
+                  {item === "Basic"
+                    ? "Essential service"
+                    : item === "Standard"
+                    ? "Professional service"
+                    : "Complete premium solution"}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="form-group">
-
-        <label>
-          Describe the Problem
-        </label>
+        <label>Describe the Problem</label>
 
         <textarea
           value={description}
@@ -457,7 +395,6 @@ export default function BookingForm({
         <small>
           {description.length}/1000
         </small>
-
       </div>
 
       <div className="booking-notice">
@@ -474,7 +411,6 @@ export default function BookingForm({
           ? "Submitting..."
           : "Submit Booking →"}
       </button>
-
     </form>
   );
-            }
+        }

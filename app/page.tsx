@@ -477,20 +477,14 @@ export default function Home() {
 
       )}
 
-      {/* BOOKING FORM */}
-
-      {selectedService && (
-
-        <div className="modal-overlay">
-
-          <div className="booking-modal">
-
-            <button
-              className="close-button"
-              onClick={() =>
-                setSelectedService(null)
-              }
-            >
+      <BookingForm
+  initialService={selectedGroup?.title || ""}
+  initialSpecificService={selectedService?.name || ""}
+  onClose={() => {
+    setSelectedService(null);
+    setSelectedGroup(null);
+  }}
+/>
               ×
             </button>
 

@@ -143,22 +143,22 @@ description: "Complete professional service with priority support.",
 type ServiceName = keyof typeof services;
 
 type Props = {
-initialService?: string;
-initialSpecificService?: string;
-onClose?: () => void;
+  initialService?: string;
+  initialSpecificService?: string;
+  onClose?: () => void;
 };
 
 export default function BookingForm({
-initialService = "",
-initialSpecificService = "",
-onClose,
+  initialService = "",
+  initialSpecificService = "",
+  onClose,
 }: Props) {
 const [name, setName] = useState("");
 const [phone, setPhone] = useState("");
 const [location, setLocation] = useState("");
 
-const [service, setService] =
-useState(initialService);
+const [specificService, setSpecificService] =
+  useState(initialSpecificService);
 
 const [specificService, setSpecificService] =
 useState(initialSpecificService);

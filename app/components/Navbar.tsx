@@ -1,30 +1,51 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 
 export default function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <nav className="navbar">
-      <div className="nav-container">
-        <Link href="/" className="nav-logo">
-          <img
-            src="/images/logo.svg"
-            alt="Dr Doi Technologies"
-            className="logo-image"
-          />
-        </Link>
+    <header className="navbar">
+      <a href="#home" className="nav-logo">
+        <img src="/images/logo.svg" alt="Dr Doi Technologies" />
+      </a>
 
-        <div className="nav-links">
-          <Link href="/">Home</Link>
-          <Link href="/#about">About</Link>
-          <Link href="/#services">Services</Link>
-          <Link href="/#contact">Contact</Link>
-        </div>
+      <button
+        className="menu-button"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Open navigation menu"
+      >
+        ☰
+      </button>
 
-        <Link href="/#contact" className="nav-button">
+      <nav className={menuOpen ? "nav-links open" : "nav-links"}>
+        <a href="#home" onClick={() => setMenuOpen(false)}>
+          Home
+        </a>
+
+        <a href="#about" onClick={() => setMenuOpen(false)}>
+          About
+        </a>
+
+        <a href="#services" onClick={() => setMenuOpen(false)}>
+          Services
+        </a>
+
+        <a href="#contact" onClick={() => setMenuOpen(false)}>
+          Contact
+        </a>
+
+        <a
+          href="https://wa.me/254114280995?text=Hello%20Dr%20Doi%20Technologies%2C%20I%20would%20like%20to%20book%20a%20service."
+          className="nav-book"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setMenuOpen(false)}
+        >
           Book a Service
-        </Link>
-      </div>
-    </nav>
+        </a>
+      </nav>
+    </header>
   );
 }

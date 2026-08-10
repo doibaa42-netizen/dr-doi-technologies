@@ -9,7 +9,14 @@ type Service = {
   price: number;
 };
 
-const serviceGroups = [
+type ServiceGroup = {
+  title: string;
+  icon: string;
+  description: string;
+  services: Service[];
+};
+
+const serviceGroups: ServiceGroup[] = [
   {
     title: "Troubleshooting",
     icon: "🔧",
@@ -20,25 +27,25 @@ const serviceGroups = [
         name: "Electrical Fault Diagnosis",
         description:
           "Find and diagnose electrical faults, short circuits and power problems.",
-        price: 500,
+        price: 0,
       },
       {
         name: "Appliance Troubleshooting",
         description:
           "Diagnosis of faulty household electrical appliances.",
-        price: 500,
+        price: 0,
       },
       {
         name: "Wiring Fault Troubleshooting",
         description:
           "Identify faulty wiring, loose connections and electrical faults.",
-        price: 700,
+        price: 0,
       },
       {
         name: "Power Supply Troubleshooting",
         description:
           "Diagnose power supply, breaker and voltage problems.",
-        price: 500,
+        price: 0,
       },
     ],
   },
@@ -53,25 +60,43 @@ const serviceGroups = [
         name: "House Wiring",
         description:
           "Electrical wiring for homes, offices and buildings.",
-        price: 1500,
+        price: 0,
+      },
+      {
+        name: "Electrical Installation",
+        description:
+          "Professional electrical installation services.",
+        price: 0,
       },
       {
         name: "Socket & Switch Installation",
         description:
           "Installation and replacement of sockets and switches.",
-        price: 500,
+        price: 0,
       },
       {
         name: "Lighting Installation",
         description:
           "Indoor and outdoor lighting installation.",
-        price: 500,
+        price: 0,
+      },
+      {
+        name: "DB & Distribution Board Work",
+        description:
+          "Distribution board installation, upgrades and maintenance.",
+        price: 0,
+      },
+      {
+        name: "MCB & Breaker Replacement",
+        description:
+          "Replacement and installation of electrical breakers.",
+        price: 0,
       },
       {
         name: "Electrical Maintenance",
         description:
           "Routine electrical inspection and maintenance.",
-        price: 1000,
+        price: 0,
       },
     ],
   },
@@ -80,31 +105,43 @@ const serviceGroups = [
     title: "Solar Solutions",
     icon: "☀️",
     description:
-      "Affordable solar energy installation and support.",
+      "Professional solar energy installation and support.",
     services: [
       {
         name: "Solar System Installation",
         description:
-          "Installation of residential and small commercial solar systems.",
-        price: 3000,
+          "Installation of residential and commercial solar systems.",
+        price: 0,
+      },
+      {
+        name: "Solar System Design",
+        description:
+          "Solar system sizing and design.",
+        price: 0,
+      },
+      {
+        name: "Inverter Installation",
+        description:
+          "Professional inverter installation and configuration.",
+        price: 0,
+      },
+      {
+        name: "Battery Installation",
+        description:
+          "Solar battery installation and connection.",
+        price: 0,
       },
       {
         name: "Solar Maintenance",
         description:
           "Inspection, servicing and maintenance of solar systems.",
-        price: 1000,
+        price: 0,
       },
       {
         name: "Solar Fault Diagnosis",
         description:
-          "Troubleshooting solar panels, controllers, batteries and inverters.",
-        price: 1000,
-      },
-      {
-        name: "Solar Water Heater Service",
-        description:
-          "Installation and maintenance of solar water heating systems.",
-        price: 2000,
+          "Troubleshooting panels, batteries, controllers and inverters.",
+        price: 0,
       },
     ],
   },
@@ -116,28 +153,34 @@ const serviceGroups = [
       "Electronics repair, testing and maintenance.",
     services: [
       {
-        name: "TV Troubleshooting",
+        name: "Electronic Equipment Troubleshooting",
         description:
-          "Diagnosis and repair of common television faults.",
-        price: 700,
+          "Diagnosis of faulty electronic equipment.",
+        price: 0,
       },
       {
         name: "Power Supply Repair",
         description:
-          "Testing and repair of electronic power supply systems.",
-        price: 700,
+          "Testing and repair of electronic power supplies.",
+        price: 0,
       },
       {
-        name: "Electronic Circuit Repair",
+        name: "Circuit Diagnosis",
         description:
-          "Diagnosis and repair of electronic circuit boards.",
-        price: 1000,
+          "Professional electronic circuit diagnosis.",
+        price: 0,
       },
       {
-        name: "Electronic Device Diagnosis",
+        name: "Component Replacement",
         description:
-          "Professional diagnosis of faulty electronic devices.",
-        price: 500,
+          "Replacement of faulty electronic components.",
+        price: 0,
+      },
+      {
+        name: "Audio Equipment Repair",
+        description:
+          "Repair and maintenance of audio equipment.",
+        price: 0,
       },
     ],
   },
@@ -152,44 +195,80 @@ const serviceGroups = [
         name: "Wi-Fi Installation",
         description:
           "Router configuration and Wi-Fi network installation.",
-        price: 1000,
+        price: 0,
       },
       {
         name: "Ethernet Network Installation",
         description:
           "Structured Ethernet cabling and network setup.",
-        price: 1500,
+        price: 0,
       },
       {
         name: "Router Configuration",
         description:
           "Router setup, configuration and troubleshooting.",
-        price: 700,
+        price: 0,
       },
       {
         name: "Computer Troubleshooting",
         description:
           "Diagnosis of software and hardware computer problems.",
-        price: 700,
+        price: 0,
+      },
+      {
+        name: "Network Troubleshooting",
+        description:
+          "Diagnosis and repair of network problems.",
+        price: 0,
       },
     ],
   },
 ];
 
+function getBookingCategory(
+  category: string
+): string {
+  const categoryMap: Record<string, string> = {
+    Troubleshooting: "General Troubleshooting",
+    "Electrical Services": "Electrical Services",
+    "Solar Solutions": "Solar Energy",
+    Electronics: "Electronics",
+    "ICT & Networking": "Networking & Wi-Fi",
+  };
+
+  return categoryMap[category] || category;
+}
+
 export default function Home() {
   const [selectedGroup, setSelectedGroup] =
-    useState<any>(null);
+    useState<ServiceGroup | null>(null);
 
   const [selectedService, setSelectedService] =
     useState<Service | null>(null);
 
-  const openGroup = (group: any) => {
+  const [bookingCategory, setBookingCategory] =
+    useState("");
+
+  const openGroup = (group: ServiceGroup) => {
     setSelectedGroup(group);
   };
 
-  const chooseService = (service: Service) => {
+  const chooseService = (
+    group: ServiceGroup,
+    service: Service
+  ) => {
     setSelectedService(service);
+
+    setBookingCategory(
+      getBookingCategory(group.title)
+    );
+
     setSelectedGroup(null);
+  };
+
+  const closeBooking = () => {
+    setSelectedService(null);
+    setBookingCategory("");
   };
 
   return (
@@ -220,21 +299,10 @@ export default function Home() {
         </div>
 
         <nav>
-          <a href="#home">
-            Home
-          </a>
-
-          <a href="#about">
-            About
-          </a>
-
-          <a href="#services">
-            Services
-          </a>
-
-          <a href="#contact">
-            Contact
-          </a>
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
         </nav>
 
         <a
@@ -437,13 +505,16 @@ export default function Home() {
             <div className="specific-services">
 
               {selectedGroup.services.map(
-                (service: Service) => (
+                (service) => (
 
                   <button
                     key={service.name}
                     className="specific-service"
                     onClick={() =>
-                      chooseService(service)
+                      chooseService(
+                        selectedGroup,
+                        service
+                      )
                     }
                   >
 
@@ -460,8 +531,7 @@ export default function Home() {
                     </div>
 
                     <b>
-                      KSh{" "}
-                      {service.price.toLocaleString()}
+                      View Packages →
                     </b>
 
                   </button>
@@ -477,22 +547,24 @@ export default function Home() {
 
       )}
 
-      <BookingForm
-  initialService={selectedGroup?.title || ""}
-  initialSpecificService={selectedService?.name || ""}
-  onClose={() => {
-    setSelectedService(null);
-    setSelectedGroup(null);
-  }}
-/>
+      {/* BOOKING FORM */}
+
+      {selectedService && (
+
+        <div className="modal-overlay">
+
+          <div className="booking-modal">
+
+            <button
+              className="close-button"
+              onClick={closeBooking}
+            >
               ×
             </button>
 
             <BookingForm
-              initialService=""
-              onClose={() =>
-                setSelectedService(null)
-              }
+              initialService={bookingCategory}
+              onClose={closeBooking}
             />
 
           </div>
@@ -551,4 +623,4 @@ export default function Home() {
 
     </main>
   );
-        }
+              }

@@ -1,5 +1,4 @@
 import "./page.css";
-import Navbar from "./components/Navbar";
 
 export const metadata = {
   title: "Dr Doi Technologies",
@@ -14,10 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <Navbar />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

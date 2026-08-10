@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import BookingForm from "../components/BookingForm";
 
 type Service = {
   name: string;

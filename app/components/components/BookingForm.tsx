@@ -126,24 +126,39 @@ type ServiceName = keyof typeof services;
 
 type Props = {
   initialService?: string;
+  initialSpecificService?: string;
   onClose?: () => void;
 };
 
 export default function BookingForm({
   initialService = "",
+  initialSpecificService = "",
   onClose,
 }: Props) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState("");
-  const [service, setService] = useState(initialService);
-  const [specificService, setSpecificService] = useState("");
-  const [description, setDescription] = useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [reference, setReference] = useState("");
+  const [service, setService] =
+    useState(initialService);
+
+  const [specificService, setSpecificService] =
+    useState(initialSpecificService);
+
+  const [description, setDescription] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [success, setSuccess] =
+    useState(false);
+
+  const [reference, setReference] =
+    useState("");
 
   const selectedServices =
     service && service in services
@@ -159,26 +174,36 @@ export default function BookingForm({
     setError("");
 
     try {
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          phone,
-          location,
-          service,
-          requestedService: specificService,
-          description,
-        }),
-      });
+      const response = await fetch(
+        "/api/bookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            phone,
+            location,
+            service,
+            requestedService:
+              specificService,
+            description,
+          }),
+        }
+      );
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
-      if (!response.ok || !data.success) {
+      if (
+        !response.ok ||
+        !data.success
+      ) {
         throw new Error(
-          data.message || "Booking submission failed."
+          data.message ||
+            "Booking submission failed."
         );
       }
 
@@ -221,6 +246,7 @@ export default function BookingForm({
         </p>
 
         <div className="booking-reference">
+
           <small>
             BOOKING REFERENCE
           </small>
@@ -228,6 +254,7 @@ export default function BookingForm({
           <strong>
             {reference}
           </strong>
+
         </div>
 
         <a
@@ -284,6 +311,7 @@ export default function BookingForm({
       <div className="form-grid">
 
         <div className="form-group">
+
           <label>
             Full Name *
           </label>
@@ -297,9 +325,11 @@ export default function BookingForm({
             placeholder="Enter your full name"
             required
           />
+
         </div>
 
         <div className="form-group">
+
           <label>
             Phone Number *
           </label>
@@ -313,11 +343,13 @@ export default function BookingForm({
             placeholder="0712345678"
             required
           />
+
         </div>
 
       </div>
 
       <div className="form-group">
+
         <label>
           Location *
         </label>
@@ -331,9 +363,11 @@ export default function BookingForm({
           placeholder="e.g. Nakuru, Lanet"
           required
         />
+
       </div>
 
       <div className="form-group">
+
         <label>
           Service Category *
         </label>
@@ -346,6 +380,7 @@ export default function BookingForm({
           }}
           required
         >
+
           <option value="">
             Select a service
           </option>
@@ -360,10 +395,13 @@ export default function BookingForm({
               </option>
             )
           )}
+
         </select>
+
       </div>
 
       <div className="form-group">
+
         <label>
           Specific Service *
         </label>
@@ -378,6 +416,7 @@ export default function BookingForm({
           disabled={!service}
           required
         >
+
           <option value="">
             Select the service
           </option>
@@ -392,10 +431,13 @@ export default function BookingForm({
               </option>
             )
           )}
+
         </select>
+
       </div>
 
       <div className="form-group">
+
         <label>
           Describe the Problem
         </label>
@@ -415,6 +457,7 @@ export default function BookingForm({
         <small>
           {description.length}/1000
         </small>
+
       </div>
 
       <div className="booking-notice">
@@ -434,4 +477,4 @@ export default function BookingForm({
 
     </form>
   );
-}
+            }

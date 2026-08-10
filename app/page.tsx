@@ -1,164 +1,221 @@
 import Navbar from "./components/Navbar";
+import "./page.css";
 
 export default function Home() {
   return (
-    <>
+    <main>
+
       <Navbar />
 
-      <main>
-        {/* HERO */}
-        <section className="hero">
-          <div className="hero-content">
-            <p className="hero-tag">PROFESSIONAL TECHNOLOGY SERVICES</p>
+      {/* HERO */}
+      <section id="home" className="hero">
+        <div className="hero-content">
 
-            <h1>
-              Smart Electrical &amp; Technology Solutions
-            </h1>
+          <p className="eyebrow">
+            PROFESSIONAL TECHNOLOGY SERVICES
+          </p>
 
-            <p className="hero-text">
-              Reliable electrical, electronics, solar, networking and
-              technology services in Nakuru and beyond.
-            </p>
+          <h1>
+            Smart Electrical &amp;
+            <br />
+            Technology Solutions
+          </h1>
 
-            <div className="hero-buttons">
-              <a href="#contact" className="primary-button">
-                Book a Service
-              </a>
+          <p className="hero-description">
+            Reliable electrical, electronics, solar, networking
+            and technology services in Nakuru and beyond.
+          </p>
 
-              <a href="#services" className="secondary-button">
-                Our Services
-              </a>
-            </div>
-          </div>
-        </section>
+          <div className="hero-buttons">
+            <a href="#booking" className="primary-button">
+              Book a Service
+            </a>
 
-        {/* ABOUT */}
-        <section id="about" className="section">
-          <div className="section-content">
-            <p className="section-tag">ABOUT US</p>
-
-            <h2>Dr Doi Technologies</h2>
-
-            <p>
-              We provide professional and affordable electrical,
-              electronics, solar and technology solutions for homes,
-              businesses and institutions.
-            </p>
-
-            <p>
-              Our goal is to deliver reliable workmanship, practical
-              solutions and excellent customer service.
-            </p>
-          </div>
-        </section>
-
-        {/* SERVICES */}
-        <section id="services" className="section services-section">
-          <div className="section-content">
-            <p className="section-tag">WHAT WE DO</p>
-
-            <h2>Our Services</h2>
-
-            <div className="services-grid">
-              <div className="service-card">
-                <h3>Electrical Services</h3>
-                <p>
-                  Electrical installation, maintenance, troubleshooting
-                  and repair services.
-                </p>
-              </div>
-
-              <div className="service-card">
-                <h3>Solar Solutions</h3>
-                <p>
-                  Solar installation, maintenance and energy solutions
-                  for homes and businesses.
-                </p>
-              </div>
-
-              <div className="service-card">
-                <h3>Electronics Repair</h3>
-                <p>
-                  Diagnosis, repair and maintenance of electronic
-                  equipment and systems.
-                </p>
-              </div>
-
-              <div className="service-card">
-                <h3>Networking</h3>
-                <p>
-                  Wi-Fi, Ethernet and network installation and
-                  troubleshooting.
-                </p>
-              </div>
-
-              <div className="service-card">
-                <h3>Smart Technology</h3>
-                <p>
-                  IoT, automation and smart technology solutions for
-                  modern homes and businesses.
-                </p>
-              </div>
-
-              <div className="service-card">
-                <h3>Technical Support</h3>
-                <p>
-                  Professional technical consultation, troubleshooting
-                  and system support.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CONTACT */}
-        <section id="contact" className="contact-section">
-          <div className="section-content">
-            <p className="section-tag">GET IN TOUCH</p>
-
-            <h2>Need a Professional Solution?</h2>
-
-            <p>
-              Contact Dr Doi Technologies for reliable electrical,
-              solar, electronics and technology services.
-            </p>
-
-            <div className="contact-details">
-              <p>
-                <strong>Phone:</strong> 0740 568 226
-              </p>
-
-              <p>
-                <strong>Phone:</strong> 0114 280 995
-              </p>
-
-              <p>
-                <strong>Email:</strong> drdoitechnologies@gmail.com
-              </p>
-
-              <p>
-                <strong>Location:</strong> Nakuru, Kenya
-              </p>
-            </div>
-
-            <a
-              href="https://wa.me/254740568226"
-              className="whatsapp-button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Chat on WhatsApp
+            <a href="#services" className="secondary-button">
+              Our Services
             </a>
           </div>
-        </section>
-      </main>
 
-      <footer className="footer">
-        <p>
-          © {new Date().getFullYear()} Dr Doi Technologies. All rights
-          reserved.
+        </div>
+      </section>
+
+
+      {/* ABOUT */}
+      <section id="about" className="section about-section">
+
+        <p className="section-label">
+          ABOUT US
         </p>
+
+        <h2>
+          Dr Doi Technologies
+        </h2>
+
+        <p>
+          Dr Doi Technologies provides professional electrical,
+          electronics, solar, networking and ICT solutions for
+          homes, businesses and organizations in Nakuru and
+          surrounding areas.
+        </p>
+
+        <p>
+          Our goal is to provide reliable, affordable and
+          innovative technology solutions that solve real-world
+          problems.
+        </p>
+
+      </section>
+
+
+      {/* SERVICES */}
+      <section id="services" className="section services-section">
+
+        <p className="section-label">
+          OUR SERVICES
+        </p>
+
+        <h2>
+          What We Do
+        </h2>
+
+        <div className="services-grid">
+
+          <div className="service-card">
+            <div className="service-icon">⚡</div>
+            <h3>Electrical Services</h3>
+            <p>
+              Electrical installation, maintenance,
+              troubleshooting and repair services.
+            </p>
+          </div>
+
+          <div className="service-card">
+            <div className="service-icon">☀️</div>
+            <h3>Solar Solutions</h3>
+            <p>
+              Solar installation, maintenance and
+              energy solutions for homes and businesses.
+            </p>
+          </div>
+
+          <div className="service-card">
+            <div className="service-icon">🔌</div>
+            <h3>Electronics Repair</h3>
+            <p>
+              Diagnosis, repair and maintenance of
+              electronic equipment and systems.
+            </p>
+          </div>
+
+          <div className="service-card">
+            <div className="service-icon">🌐</div>
+            <h3>Networking &amp; ICT</h3>
+            <p>
+              Wi-Fi, Ethernet networking, computer
+              and ICT installation services.
+            </p>
+          </div>
+
+          <div className="service-card">
+            <div className="service-icon">🛠️</div>
+            <h3>Technology Solutions</h3>
+            <p>
+              Smart technology, automation and
+              customized technology solutions.
+            </p>
+          </div>
+
+          <div className="service-card">
+            <div className="service-icon">🔧</div>
+            <h3>Maintenance &amp; Repair</h3>
+            <p>
+              Professional troubleshooting and
+              maintenance for electrical and technology systems.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* BOOKING */}
+      <section id="booking" className="booking-section">
+
+        <div className="booking-content">
+
+          <p className="section-label">
+            NEED OUR SERVICES?
+          </p>
+
+          <h2>
+            Book a Service Today
+          </h2>
+
+          <p>
+            Contact Dr Doi Technologies for reliable
+            electrical, solar, electronics and ICT services.
+          </p>
+
+          <a
+            href="https://wa.me/254114280995?text=Hello%20Dr%20Doi%20Technologies%2C%20I%20would%20like%20to%20book%20a%20service."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="primary-button"
+          >
+            Book via WhatsApp
+          </a>
+
+        </div>
+
+      </section>
+
+
+      {/* CONTACT */}
+      <section id="contact" className="section contact-section">
+
+        <p className="section-label">
+          CONTACT US
+        </p>
+
+        <h2>
+          Dr Doi Technologies
+        </h2>
+
+        <p>
+          Nakuru, Kenya
+        </p>
+
+        <p>
+          Electrical • Electronics • Solar • ICT Solutions
+        </p>
+
+        <a
+          href="https://wa.me/254114280995"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="contact-button"
+        >
+          WhatsApp Us
+        </a>
+
+      </section>
+
+
+      {/* FOOTER */}
+      <footer className="footer">
+
+        <p>
+          © {new Date().getFullYear()} Dr Doi Technologies.
+          All rights reserved.
+        </p>
+
+        <p>
+          Electrical • Electronics • Solar • ICT Solutions
+        </p>
+
       </footer>
-    </>
+
+    </main>
   );
 }

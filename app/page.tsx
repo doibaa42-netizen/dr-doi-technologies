@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import BookingForm from "@/components/BookingForm";
 type Service = {
   name: string;
   image: string;
@@ -631,19 +631,61 @@ export default function Home() {
     useState<Service | null>(null);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
+const [bookingCategory, setBookingCategory] =
+  useState("");
+
+const [bookingSpecificService, setBookingSpecificService] =
+  useState("");
+function openBooking(
+  category: string,
+  specificService: string
+) {
+  const categoryMap: Record<string, string> = {
+    "Electrical Services": "Electrical Services",
+    "Air Conditioning & Refrigeration": "Air Conditioning",
+    "Solar Energy": "Solar Solutions",
+    "Electronics & Appliances": "Electronics",
+    "Networking & ICT": "Networking & Wi-Fi",
+    "CCTV & Security": "CCTV & Security",
+    "Smart Technology & Automation": "General Troubleshooting",
+    "Industrial Services": "Electrical Services",
+  };
+
+  let mappedCategory =
+    categoryMap[category] || "General Troubleshooting";
+
+  // Correctly separate AC from refrigeration
+  if (
+    category === "Air Conditioning & Refrigeration"
+  ) {
+    if (
+      specificService.toLowerCase().includes("refrigerator") ||
+      specificService.toLowerCase().includes("freezer") ||
+      specificService.toLowerCase().includes("cold room") ||
+      specificService.toLowerCase().includes("refrigeration")
+    ) {
+      mappedCategory = "Refrigeration";
+    } else {
+      mappedCategory = "Air Conditioning";
+    }
+  }
+
+  setBookingCategory(mappedCategory);
+  setBookingSpecificService(specificService);
+  setBookingOpen(true);
+}
   const whatsappNumber = "254114280995";
 
-  function bookService(serviceName: string) {
-    const message = encodeURIComponent(
-      `Hello Dr Doi Technologies. I would like to book ${serviceName}.`
-    );
-
-    window.open(
-      `https://wa.me/${whatsappNumber}?text=${message}`,
-      "_blank"
-    );
-  }
+  function bookService(
+  category: string,
+  specificService: string = ""
+) {
+  setBookingCategory(category);
+  setBookingSpecificService(specificService);
+  setBookingOpen(true);
+}
 
   function showServices() {
     document
@@ -733,9 +775,12 @@ export default function Home() {
 
             <button
               className="nav-book"
-              onClick={()
-                              bookService("a general service")
-            }
+              onClick={() =>
+  bookService(
+    selectedGroup?.name || "General Troubleshooting",
+    selectedService?.name || ""
+  )
+}
             >
               Book Now
             </button>
@@ -1040,9 +1085,31 @@ export default function Home() {
           © {new Date().getFullYear()} Dr Doi Technologies.
           All rights reserved.
         </p>
-1044 </footer>
+ </footer>
+      {bookingOpen && (
+  <div className="booking-overlay">
+    <div className="booking-modal">
 
-1046 </main>
+      <button
+        type="button"
+        className="booking-close"
+        onClick={() => setBookingOpen(false)}
+        aria-label="Close booking"
+      >
+        ×
+      </button>
 
-1048 }
+      <BookingForm
+        initialService={bookingCategory}
+        initialSpecificService={bookingSpecificService}
+        onClose={() => setBookingOpen(false)}
+      />
+
+    </div>
+  </div>
+)}
+
+ </main>
+
+ }
       

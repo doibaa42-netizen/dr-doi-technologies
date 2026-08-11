@@ -1,1065 +1,1048 @@
 "use client";
 
 import { useState } from "react";
-import BookingForm from "../components/BookingForm";
 
 type Service = {
-name: string;
-description: string;
-price: number;
+  name: string;
+  image: string;
+  description: string;
+  details: string[];
 };
 
 type ServiceGroup = {
-title: string;
-icon: string;
-description: string;
-services: Service[];
+  name: string;
+  icon: string;
+  description: string;
+  services: Service[];
 };
 
 const serviceGroups: ServiceGroup[] = [
-{
-title: "Troubleshooting",
-icon: "🔧",
-description:
-"Professional diagnosis and repair of electrical, electronic and appliance faults.",
-services: [
-{
-name: "Electrical Fault Diagnosis",
-description:
-"Professional diagnosis of electrical faults, short circuits and power problems.",
-price: 1500,
-},
-{
-name: "Appliance Troubleshooting",
-description:
-"Diagnosis and troubleshooting of faulty household appliances.",
-price: 1500,
-},
-{
-name: "Wiring Fault Troubleshooting",
-description:
-"Identification and correction of faulty wiring and loose connections.",
-price: 2000,
-},
-{
-name: "Power Supply Troubleshooting",
-description:
-"Diagnosis of breakers, voltage problems and power supply faults.",
-price: 1500,
-},
-],
-},
+  {
+    name: "Electrical Services",
+    icon: "⚡",
+    description:
+      "Professional electrical installation, repair, maintenance and troubleshooting.",
+    services: [
+      {
+        name: "House Wiring",
+        image: "/images/services/house-wiring.jpg",
+        description:
+          "Complete electrical wiring for homes, apartments, offices and buildings.",
+        details: [
+          "New electrical installations",
+          "Rewiring",
+          "Lighting installation",
+          "Socket installation",
+          "Distribution board installation",
+        ],
+      },
+      {
+        name: "Electrical Troubleshooting",
+        image: "/images/services/troubleshooting.jpg",
+        description:
+          "Diagnosis and repair of electrical faults and power problems.",
+        details: [
+          "Power failure diagnosis",
+          "Short-circuit detection",
+          "Breaker tripping",
+          "Fault finding",
+          "Socket and switch faults",
+        ],
+      },
+      {
+        name: "Electrical Repairs",
+        image: "/images/services/electrical-repair.jpg",
+        description:
+          "Repair and replacement of damaged electrical components.",
+        details: [
+          "Socket repairs",
+          "Switch replacement",
+          "MCB replacement",
+          "Fuse replacement",
+          "Distribution board repairs",
+        ],
+      },
+      {
+        name: "Lighting Installation",
+        image: "/images/services/lighting.jpg",
+        description:
+          "Indoor, outdoor, security and decorative lighting installation.",
+        details: [
+          "LED lighting",
+          "Security lights",
+          "Outdoor lighting",
+          "Motion sensor lights",
+          "Decorative lighting",
+        ],
+      },
+      {
+        name: "Earthing & Safety",
+        image: "/images/services/earthing.jpg",
+        description:
+          "Electrical earthing, testing and safety improvements.",
+        details: [
+          "Earthing installation",
+          "Earth resistance testing",
+          "Safety inspection",
+          "Surge protection",
+          "Equipment protection",
+        ],
+      },
+      {
+        name: "Generator & Backup Power",
+        image: "/images/services/generator.jpg",
+        description:
+          "Generator connections and backup power solutions.",
+        details: [
+          "Generator connection",
+          "Changeover installation",
+          "Backup wiring",
+          "Fault diagnosis",
+          "Maintenance",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Electrical Services",
-icon: "⚡",
-description:
-"Professional electrical installation, repair and maintenance.",
-services: [
-{
-name: "House Wiring",
-description:
-"Professional electrical wiring for homes, offices and buildings.",
-price: 7500,
-},
-{
-name: "Electrical Installation",
-description:
-"Electrical installation services for homes and businesses.",
-price: 5000,
-},
-{
-name: "Socket & Switch Installation",
-description:
-"Professional installation and replacement of sockets and switches.",
-price: 1500,
-},
-{
-name: "Lighting Installation",
-description:
-"Indoor and outdoor lighting installation.",
-price: 2000,
-},
-{
-name: "DB & Distribution Board Work",
-description:
-"Distribution board installation, repair and organization.",
-price: 5000,
-},
-{
-name: "MCB & Breaker Replacement",
-description:
-"Replacement and installation of electrical breakers and MCBs.",
-price: 2000,
-},
-{
-name: "Electrical Maintenance",
-description:
-"Professional electrical inspection and preventive maintenance.",
-price: 2500,
-},
-],
-},
+  {
+    name: "Air Conditioning & Refrigeration",
+    icon: "❄️",
+    description:
+      "Air conditioner, refrigerator, freezer and cooling-system services.",
+    services: [
+      {
+        name: "Air Conditioner Installation",
+        image: "/images/services/air-conditioner.jpg",
+        description:
+          "Professional installation of domestic and commercial air conditioners.",
+        details: [
+          "Split AC installation",
+          "Indoor unit installation",
+          "Outdoor unit installation",
+          "Electrical connection",
+          "System testing",
+        ],
+      },
+      {
+        name: "Air Conditioner Repair",
+        image: "/images/services/air-conditioner-repair.jpg",
+        description:
+          "Diagnosis and repair of air conditioning problems.",
+        details: [
+          "AC not cooling",
+          "Electrical faults",
+          "Control board faults",
+          "Fan problems",
+          "Routine servicing",
+        ],
+      },
+      {
+        name: "AC Servicing",
+        image: "/images/services/ac-servicing.jpg",
+        description:
+          "Professional cleaning, inspection and maintenance of AC systems.",
+        details: [
+          "Filter cleaning",
+          "Coil cleaning",
+          "Electrical inspection",
+          "Performance testing",
+          "Preventive maintenance",
+        ],
+      },
+      {
+        name: "Refrigerator Repair",
+        image: "/images/services/refrigerator.jpg",
+        description:
+          "Repair and troubleshooting of refrigerators and freezers.",
+        details: [
+          "Fridge not cooling",
+          "Electrical faults",
+          "Thermostat problems",
+          "Compressor faults",
+          "Control system diagnosis",
+        ],
+      },
+      {
+        name: "Freezer Repair",
+        image: "/images/services/freezer.jpg",
+        description:
+          "Diagnosis and repair of domestic and commercial freezers.",
+        details: [
+          "Cooling problems",
+          "Electrical diagnosis",
+          "Thermostat replacement",
+          "Control faults",
+          "Maintenance",
+        ],
+      },
+      {
+        name: "Cold Room Services",
+        image: "/images/services/cold-room.jpg",
+        description:
+          "Maintenance and troubleshooting of commercial refrigeration systems.",
+        details: [
+          "Cold room diagnosis",
+          "Electrical faults",
+          "Temperature problems",
+          "Controller troubleshooting",
+          "Preventive maintenance",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Solar Solutions",
-icon: "☀️",
-description:
-"Solar installation, maintenance, troubleshooting and system support.",
-services: [
-{
-name: "Solar System Installation",
-description:
-"Professional installation of residential and commercial solar systems.",
-price: 15000,
-},
-{
-name: "Solar System Design",
-description:
-"Solar sizing and system design according to your energy requirements.",
-price: 5000,
-},
-{
-name: "Inverter Installation",
-description:
-"Professional inverter installation and configuration.",
-price: 5000,
-},
-{
-name: "Battery Installation",
-description:
-"Battery installation, connection and system configuration.",
-price: 4000,
-},
-{
-name: "Solar Maintenance",
-description:
-"Inspection, servicing and maintenance of solar systems.",
-price: 3500,
-},
-{
-name: "Solar Fault Diagnosis",
-description:
-"Diagnosis of solar panels, batteries, controllers and inverter faults.",
-price: 2500,
-},
-{
-name: "Solar Water Heater Service",
-description:
-"Installation, servicing and maintenance of solar water heaters.",
-price: 5000,
-},
-],
-},
+  {
+    name: "Solar Energy",
+    icon: "☀️",
+    description:
+      "Solar power, solar water heating and backup-energy solutions.",
+    services: [
+      {
+        name: "Solar Panel Installation",
+        image: "/images/services/solar-installation.jpg",
+        description:
+          "Professional installation and setup of solar PV systems.",
+        details: [
+          "Solar panel installation",
+          "System sizing",
+          "Panel positioning",
+          "Solar wiring",
+          "System testing",
+        ],
+      },
+      {
+        name: "Solar Water Heater",
+        image: "/images/services/solar-water-heater.jpg",
+        description:
+          "Installation, repair and maintenance of solar water heaters.",
+        details: [
+          "Solar water heater installation",
+          "Pipe connection",
+          "Controller installation",
+          "Fault diagnosis",
+          "Maintenance",
+        ],
+      },
+      {
+        name: "Solar Inverter",
+        image: "/images/services/solar-inverter.jpg",
+        description:
+          "Installation and troubleshooting of solar inverter systems.",
+        details: [
+          "Inverter installation",
+          "Configuration",
+          "Battery connection",
+          "Fault diagnosis",
+          "System testing",
+        ],
+      },
+      {
+        name: "Solar Batteries",
+        image: "/images/services/solar-battery.jpg",
+        description:
+          "Solar battery installation, testing and backup solutions.",
+        details: [
+          "Battery sizing",
+          "Battery installation",
+          "Battery testing",
+          "Cable inspection",
+          "Backup solutions",
+        ],
+      },
+      {
+        name: "Solar Maintenance",
+        image: "/images/services/solar-maintenance.jpg",
+        description:
+          "Inspection and maintenance of existing solar systems.",
+        details: [
+          "Panel inspection",
+          "Cable inspection",
+          "Battery testing",
+          "Inverter inspection",
+          "Performance testing",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Solar Water Heaters",
-icon: "♨️",
-description:
-"Solar water heater installation, servicing and maintenance.",
-services: [
-{
-name: "Solar Water Heater Installation",
-description:
-"Professional installation of solar water heating systems.",
-price: 10000,
-},
-{
-name: "System Inspection",
-description:
-"Inspection and performance assessment of the system.",
-price: 2500,
-},
-{
-name: "Leak Troubleshooting",
-description:
-"Detection and repair of solar water heater leaks.",
-price: 2500,
-},
-{
-name: "Controller Installation",
-description:
-"Installation and configuration of solar water heater controllers.",
-price: 3000,
-},
-{
-name: "Heating Element Replacement",
-description:
-"Replacement of faulty heating elements.",
-price: 3500,
-},
-{
-name: "Maintenance",
-description:
-"Complete solar water heater maintenance.",
-price: 3500,
-},
-],
-},
+  {
+    name: "Electronics & Appliances",
+    icon: "🔧",
+    description:
+      "Repair and troubleshooting of electronics and household appliances.",
+    services: [
+      {
+        name: "TV Repair",
+        image: "/images/services/tv-repair.jpg",
+        description:
+          "Diagnosis and repair of television electrical and electronic faults.",
+        details: [
+          "TV power faults",
+          "Display problems",
+          "Backlight problems",
+          "Power supply faults",
+          "Board diagnosis",
+        ],
+      },
+      {
+        name: "Washing Machine Repair",
+        image: "/images/services/washing-machine.jpg",
+        description:
+          "Repair and troubleshooting of washing machines.",
+        details: [
+          "Power problems",
+          "Motor faults",
+          "Control board faults",
+          "Sensor problems",
+          "Drainage problems",
+        ],
+      },
+      {
+        name: "Microwave Repair",
+        image: "/images/services/microwave.jpg",
+        description:
+          "Diagnosis and repair of microwave electrical faults.",
+        details: [
+          "Power failure",
+          "Heating problems",
+          "Control faults",
+          "Door-switch faults",
+          "General diagnosis",
+        ],
+      },
+      {
+        name: "Electric Cooker & Oven",
+        image: "/images/services/electric-cooker.jpg",
+        description:
+          "Repair and installation of electric cookers and ovens.",
+        details: [
+          "Heating faults",
+          "Element replacement",
+          "Thermostat problems",
+          "Electrical faults",
+          "Installation",
+        ],
+      },
+      {
+        name: "Water Dispenser",
+        image: "/images/services/water-dispenser.jpg",
+        description:
+          "Repair and troubleshooting of water dispensers.",
+        details: [
+          "Power faults",
+          "Heating problems",
+          "Cooling problems",
+          "Thermostat faults",
+          "General servicing",
+        ],
+      },
+      {
+        name: "Electronics Repair",
+        image: "/images/services/electronics-repair.jpg",
+        description:
+          "Professional diagnosis and repair of electronic equipment.",
+        details: [
+          "PCB diagnosis",
+          "Power supply repair",
+          "Component testing",
+          "Circuit troubleshooting",
+          "Electronic fault finding",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Air Conditioning",
-icon: "❄️",
-description:
-"Professional air conditioner installation, servicing and repair.",
-services: [
-{
-name: "AC Installation",
-description:
-"Professional air conditioner installation.",
-price: 10000,
-},
-{
-name: "AC Servicing",
-description:
-"Complete air conditioner servicing and performance check.",
-price: 3500,
-},
-{
-name: "AC Cleaning",
-description:
-"Professional cleaning of indoor and outdoor AC units.",
-price: 2500,
-},
-{
-name: "AC Troubleshooting",
-description:
-"Diagnosis of air conditioner electrical and cooling faults.",
-price: 2500,
-},
-{
-name: "Electrical Fault Diagnosis",
-description:
-"Diagnosis of electrical faults affecting AC systems.",
-price: 2500,
-},
-{
-name: "AC Maintenance",
-description:
-"Preventive maintenance for air conditioning systems.",
-price: 3500,
-},
-],
-},
+  {
+    name: "Networking & ICT",
+    icon: "🌐",
+    description:
+      "Computer, Wi-Fi, Ethernet, internet and networking services.",
+    services: [
+      {
+        name: "Wi-Fi Installation",
+        image: "/images/services/wifi.jpg",
+        description:
+          "Professional Wi-Fi installation and configuration.",
+        details: [
+          "Router installation",
+          "Wi-Fi configuration",
+          "Coverage improvement",
+          "Password configuration",
+          "Network troubleshooting",
+        ],
+      },
+      {
+        name: "Ethernet Networking",
+        image: "/images/services/ethernet.jpg",
+        description:
+          "Structured Ethernet cabling and LAN installation.",
+        details: [
+          "LAN cabling",
+          "RJ45 termination",
+          "Network testing",
+          "Switch installation",
+          "Office networking",
+        ],
+      },
+      {
+        name: "Computer Repair",
+        image: "/images/services/computer-repair.jpg",
+        description:
+          "Computer troubleshooting, repair and software installation.",
+        details: [
+          "Computer diagnosis",
+          "Windows installation",
+          "Software installation",
+          "System optimization",
+          "Hardware troubleshooting",
+        ],
+      },
+      {
+        name: "Laptop Repair",
+        image: "/images/services/laptop-repair.jpg",
+        description:
+          "Laptop troubleshooting, maintenance and repair.",
+        details: [
+          "Operating system problems",
+          "Slow laptop diagnosis",
+          "Hardware diagnosis",
+          "Software installation",
+          "System maintenance",
+        ],
+      },
+      {
+        name: "Printer Services",
+        image: "/images/services/printer.jpg",
+        description:
+          "Printer installation, configuration and troubleshooting.",
+        details: [
+          "Printer setup",
+          "Driver installation",
+          "Network printer setup",
+          "Printing problems",
+          "Troubleshooting",
+        ],
+      },
+      {
+        name: "Network Troubleshooting",
+        image: "/images/services/network-troubleshooting.jpg",
+        description:
+          "Diagnosis and repair of internet and network problems.",
+        details: [
+          "Internet connection problems",
+          "Router troubleshooting",
+          "Network configuration",
+          "Slow network diagnosis",
+          "Network optimization",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Refrigeration",
-icon: "🧊",
-description:
-"Refrigerator, freezer and refrigeration system services.",
-services: [
-{
-name: "Refrigerator Repair",
-description:
-"Diagnosis and repair of refrigerator faults.",
-price: 2500,
-},
-{
-name: "Freezer Repair",
-description:
-"Diagnosis and repair of freezer faults.",
-price: 2500,
-},
-{
-name: "Cooling Fault Diagnosis",
-description:
-"Diagnosis of cooling and temperature problems.",
-price: 2000,
-},
-{
-name: "Electrical Troubleshooting",
-description:
-"Diagnosis of electrical faults in refrigeration equipment.",
-price: 2000,
-},
-{
-name: "Thermostat Replacement",
-description:
-"Replacement and testing of faulty thermostats.",
-price: 2500,
-},
-{
-name: "Refrigeration Maintenance",
-description:
-"Professional maintenance and inspection.",
-price: 3500,
-},
-],
-},
+  {
+    name: "CCTV & Security",
+    icon: "📹",
+    description:
+      "CCTV, surveillance, access control and security systems.",
+    services: [
+      {
+        name: "CCTV Installation",
+        image: "/images/services/cctv.jpg",
+        description:
+          "Professional CCTV camera installation and configuration.",
+        details: [
+          "Camera installation",
+          "DVR/NVR installation",
+          "Camera positioning",
+          "Cable installation",
+          "System testing",
+        ],
+      },
+      {
+        name: "CCTV Repair",
+        image: "/images/services/cctv-repair.jpg",
+        description:
+          "Troubleshooting and repair of CCTV surveillance systems.",
+        details: [
+          "Camera faults",
+          "No display",
+          "Recording problems",
+          "Power problems",
+          "DVR/NVR diagnosis",
+        ],
+      },
+      {
+        name: "Access Control",
+        image: "/images/services/access-control.jpg",
+        description:
+          "Electronic access control installation and configuration.",
+        details: [
+          "Electronic locks",
+          "Keypad systems",
+          "Card access",
+          "Access controllers",
+          "System configuration",
+        ],
+      },
+      {
+        name: "Security Lighting",
+        image: "/images/services/security-lighting.jpg",
+        description:
+          "Installation of security and outdoor lighting systems.",
+        details: [
+          "Security floodlights",
+          "Motion sensor lights",
+          "Outdoor lighting",
+          "Automatic lighting",
+          "Maintenance",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Electronics",
-icon: "🔌",
-description:
-"Professional electronics diagnosis, repair and maintenance.",
-services: [
-{
-name: "TV Troubleshooting",
-description:
-"Diagnosis and repair of common television faults.",
-price: 2000,
-},
-{
-name: "Power Supply Repair",
-description:
-"Testing and repair of electronic power supply systems.",
-price: 2000,
-},
-{
-name: "Electronic Circuit Repair",
-description:
-"Professional diagnosis and repair of electronic circuit boards.",
-price: 3500,
-},
-{
-name: "Electronic Device Diagnosis",
-description:
-"Professional diagnosis of faulty electronic devices.",
-price: 1500,
-},
-{
-name: "Audio Equipment Repair",
-description:
-"Diagnosis and repair of speakers, amplifiers and audio systems.",
-price: 2500,
-},
-{
-name: "Electronic Maintenance",
-description:
-"Professional maintenance of electronic equipment.",
-price: 2500,
-},
-],
-},
+  {
+    name: "Smart Technology & Automation",
+    icon: "💻",
+    description:
+      "IoT, smart-home, automation and energy-monitoring solutions.",
+    services: [
+      {
+        name: "Smart Home Systems",
+        image: "/images/services/smart-home.jpg",
+        description:
+          "Smart automation solutions for homes and businesses.",
+        details: [
+          "Smart lighting",
+          "Smart switches",
+          "Remote control",
+          "Smart plugs",
+          "Home automation",
+        ],
+      },
+      {
+        name: "IoT Solutions",
+        image: "/images/services/iot.jpg",
+        description:
+          "Internet of Things systems for monitoring and automation.",
+        details: [
+          "IoT devices",
+          "Sensors",
+          "Remote monitoring",
+          "Data collection",
+          "Automation",
+        ],
+      },
+      {
+        name: "Energy Monitoring",
+        image: "/images/services/energy-monitoring.jpg",
+        description:
+          "Electrical energy monitoring and consumption analysis.",
+        details: [
+          "Power measurement",
+          "Energy monitoring",
+          "Load monitoring",
+          "Overload monitoring",
+          "Energy-saving assessment",
+        ],
+      },
+      {
+        name: "Automation Systems",
+        image: "/images/services/automation.jpg",
+        description:
+          "Electrical and electronic automation solutions.",
+        details: [
+          "Automatic switching",
+          "Relay control",
+          "Sensor systems",
+          "Motor control",
+          "Custom automation",
+        ],
+      },
+    ],
+  },
 
-{
-title: "Networking & Wi-Fi",
-icon: "🌐",
-description:
-"Professional networking, Wi-Fi and internet connectivity solutions.",
-services: [
-{
-name: "Wi-Fi Installation",
-description:
-"Professional router configuration and Wi-Fi installation.",
-price: 2500,
-},
-{
-name: "Router Configuration",
-description:
-"Router setup, configuration and troubleshooting.",
-price: 1500,
-},
-{
-name: "LAN Installation",
-description:
-"Professional local area network installation.",
-price: 5000,
-},
-{
-name: "Ethernet Cabling",
-description:
-"Structured Ethernet cabling and network setup.",
-price: 5000,
-},
-{
-name: "Network Troubleshooting",
-description:
-"Diagnosis and correction of network connectivity problems.",
-price: 2000,
-},
-{
-name: "Network Maintenance",
-description:
-"Professional network inspection and maintenance.",
-price: 2500,
-},
-],
-},
-
-{
-title: "CCTV & Security",
-icon: "📹",
-description:
-"CCTV installation, configuration and security system support.",
-services: [
-{
-name: "CCTV Camera Installation",
-description:
-"Professional CCTV camera installation.",
-price: 5000,
-},
-{
-name: "DVR/NVR Configuration",
-description:
-"DVR/NVR setup and configuration.",
-price: 3500,
-},
-{
-name: "Remote CCTV Viewing",
-description:
-"Configure CCTV remote viewing on phones and computers.",
-price: 3500,
-},
-{
-name: "Camera Troubleshooting",
-description:
-"Diagnosis and repair of CCTV camera faults.",
-price: 2000,
-},
-{
-name: "Security System Maintenance",
-description:
-"Inspection and maintenance of CCTV systems.",
-price: 3500,
-},
-],
-},
-
-{
-title: "Computers & IT",
-icon: "💻",
-description:
-"Computer repair, software installation and IT support.",
-services: [
-{
-name: "Computer Troubleshooting",
-description:
-"Diagnosis of computer hardware and software problems.",
-price: 1500,
-},
-{
-name: "Windows Installation",
-description:
-"Professional Windows installation and configuration.",
-price: 2000,
-},
-{
-name: "Software Installation",
-description:
-"Installation and configuration of required software.",
-price: 1000,
-},
-{
-name: "Computer Maintenance",
-description:
-"Computer cleaning, optimization and preventive maintenance.",
-price: 2000,
-},
-{
-name: "Hardware Diagnosis",
-description:
-"Professional computer hardware diagnosis.",
-price: 1500,
-},
-{
-name: "IT Support",
-description:
-"General technical and IT support.",
-price: 2000,
-},
-],
-},
-
-{
-title: "Printers",
-icon: "🖨️",
-description:
-"Printer installation, troubleshooting and maintenance.",
-services: [
-{
-name: "Printer Installation",
-description:
-"Printer installation and configuration.",
-price: 1500,
-},
-{
-name: "Printer Troubleshooting",
-description:
-"Diagnosis and repair of printer problems.",
-price: 1500,
-},
-{
-name: "Network Printer Setup",
-description:
-"Connect printers to Wi-Fi or Ethernet networks.",
-price: 2500,
-},
-{
-name: "Driver Installation",
-description:
-"Printer driver installation and configuration.",
-price: 1000,
-},
-{
-name: "Printer Maintenance",
-description:
-"Professional printer cleaning and maintenance.",
-price: 2000,
-},
-],
-},
-
-{
-title: "Plumbing",
-icon: "🚰",
-description:
-"Professional plumbing installation, repair and maintenance.",
-services: [
-{
-name: "Pipe Installation",
-description:
-"Water pipe installation and replacement.",
-price: 3000,
-},
-{
-name: "Leak Repair",
-description:
-"Detection and repair of water leaks.",
-price: 2000,
-},
-{
-name: "Tap Installation",
-description:
-"Installation and replacement of taps.",
-price: 1500,
-},
-{
-name: "Water System Troubleshooting",
-description:
-"Diagnosis of water supply problems.",
-price: 2000,
-},
-{
-name: "Drainage Troubleshooting",
-description:
-"Diagnosis and correction of drainage problems.",
-price: 2500,
-},
-{
-name: "Plumbing Maintenance",
-description:
-"Inspection and preventive plumbing maintenance.",
-price: 2500,
-},
-],
-},
-
-{
-title: "Welding & Fabrication",
-icon: "🔩",
-description:
-"Professional welding, metalwork and fabrication.",
-services: [
-{
-name: "Metal Welding",
-description:
-"Professional welding and metal repair.",
-price: 2500,
-},
-{
-name: "Gate Fabrication",
-description:
-"Custom metal gate fabrication.",
-price: 15000,
-},
-{
-name: "Door Fabrication",
-description:
-"Custom metal door fabrication.",
-price: 12000,
-},
-{
-name: "Metal Repairs",
-description:
-"Repair of damaged metal structures.",
-price: 2500,
-},
-{
-name: "Frame Fabrication",
-description:
-"Custom metal frame fabrication.",
-price: 7500,
-},
-{
-name: "General Fabrication",
-description:
-"Custom welding and fabrication services.",
-price: 5000,
-},
-],
-},
-
-{
-title: "General Troubleshooting",
-icon: "🛠️",
-description:
-"Professional diagnosis of electrical, electronic and equipment faults.",
-services: [
-{
-name: "Electrical Fault Diagnosis",
-description:
-"Professional electrical fault diagnosis.",
-price: 1500,
-},
-{
-name: "Electronic Fault Diagnosis",
-description:
-"Diagnosis of electronic equipment faults.",
-price: 1500,
-},
-{
-name: "Appliance Troubleshooting",
-description:
-"Professional appliance troubleshooting.",
-price: 1500,
-},
-{
-name: "Dispenser Troubleshooting",
-description:
-"Diagnosis and repair of water dispenser faults.",
-price: 2000,
-},
-{
-name: "Power-Related Faults",
-description:
-"Diagnosis of power-related equipment problems.",
-price: 1500,
-},
-{
-name: "Equipment Inspection",
-description:
-"Professional equipment inspection and diagnosis.",
-price: 1500,
-},
-],
-},
+  {
+    name: "Industrial Services",
+    icon: "⚙️",
+    description:
+      "Industrial electrical maintenance, motors and control systems.",
+    services: [
+      {
+        name: "Motor Troubleshooting",
+        image: "/images/services/motors.jpg",
+        description:
+          "Diagnosis and troubleshooting of electrical motors.",
+        details: [
+          "Motor fault diagnosis",
+          "Winding inspection",
+          "Starting problems",
+          "Overload problems",
+          "Motor control",
+        ],
+      },
+      {
+        name: "Control Panel Wiring",
+        image: "/images/services/control-panel.jpg",
+        description:
+          "Electrical control panel wiring and troubleshooting.",
+        details: [
+          "Control panel wiring",
+          "Contactor installation",
+          "Relay installation",
+          "Protection devices",
+          "Testing",
+        ],
+      },
+      {
+        name: "Industrial Maintenance",
+        image: "/images/services/industrial-maintenance.jpg",
+        description:
+          "Preventive and corrective electrical maintenance.",
+        details: [
+          "Equipment inspection",
+          "Fault diagnosis",
+          "Electrical maintenance",
+          "Motor maintenance",
+          "Safety inspection",
+        ],
+      },
+      {
+        name: "Electrical Automation",
+        image: "/images/services/industrial-automation.jpg",
+        description:
+          "Industrial automation and control solutions.",
+        details: [
+          "Motor control",
+          "Sensors",
+          "Relays",
+          "Contactors",
+          "Automation troubleshooting",
+        ],
+      },
+    ],
+  },
 ];
 
 export default function Home() {
-const [selectedGroup, setSelectedGroup] =
-useState<ServiceGroup | null>(null);
+  const [selectedGroup, setSelectedGroup] =
+    useState<ServiceGroup | null>(null);
 
-const [selectedService, setSelectedService] =
-useState<Service | null>(null);
+  const [selectedService, setSelectedService] =
+    useState<Service | null>(null);
 
-const [showBooking, setShowBooking] =
-useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-const [bookingCategory, setBookingCategory] =
-useState("");
+  const whatsappNumber = "254114280995";
 
-const [bookingService, setBookingService] =
-useState("");
+  function bookService(serviceName: string) {
+    const message = encodeURIComponent(
+      `Hello Dr Doi Technologies. I would like to book ${serviceName}.`
+    );
 
-function openGroup(group: ServiceGroup) {
-setSelectedGroup(group);
-}
+    window.open(
+      `https://wa.me/${whatsappNumber}?text=${message}`,
+      "_blank"
+    );
+  }
 
-function chooseService(
-service: Service
-) {
-setSelectedService(service);
-setBookingCategory(
-selectedGroup?.title || ""
-);
-setBookingService(service.name);
-setSelectedGroup(null);
-setShowBooking(true);
-}
+  function showServices() {
+    document
+      .getElementById("services")
+      ?.scrollIntoView({ behavior: "smooth" });
 
-function openGeneralBooking() {
-setBookingCategory("");
-setBookingService("");
-setShowBooking(true);
-}
+    setMenuOpen(false);
+  }
 
-function closeBooking() {
-setShowBooking(false);
-setSelectedService(null);
-}
+  return (
+    <main className="site">
 
-return (
-<main>
+      {/* NAVIGATION */}
 
-  {/* LIVE BACKGROUND */}
-
-  <div className="live-background">
-    <span />
-    <span />
-    <span />
-    <span />
-    <span />
-    <span />
-    <span />
-    <span />
-  </div>
-
-  {/* NAVBAR */}
-
-  <header className="navbar">
-
-    <div className="nav-logo">
-      <img
-        src="/images/logo.svg"
-        alt="Dr Doi Technologies"
-      />
-    </div>
-
-    <nav>
-      <a href="#home">
-        Home
-      </a>
-
-      <a href="#about">
-        About
-      </a>
-
-      <a href="#services">
-        Services
-      </a>
-
-      <a href="#contact">
-        Contact
-      </a>
-    </nav>
-
-    <button
-      type="button"
-      className="nav-button"
-      onClick={openGeneralBooking}
-    >
-      Book a Service
-    </button>
-
-  </header>
-
-  {/* HERO */}
-
-  <section
-    className="hero"
-    id="home"
-  >
-
-    <div className="hero-content">
-
-      <p className="eyebrow">
-        PROFESSIONAL TECHNOLOGY SERVICES
-      </p>
-
-      <h1>
-        Smart Electrical &
-        <br />
-        Technology Solutions
-      </h1>
-
-      <p className="hero-text">
-        Reliable electrical, electronics,
-        solar, networking and technology
-        services in Nakuru and beyond.
-      </p>
-
-      <div className="hero-buttons">
-
-        <button
-          type="button"
-          className="primary-button"
-          onClick={openGeneralBooking}
-        >
-          Book a Service
-        </button>
-
-        <a
-          href="#services"
-          className="secondary-button"
-        >
-          Our Services
-        </a>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  {/* ABOUT */}
-
-  <section
-    className="about"
-    id="about"
-  >
-
-    <p className="eyebrow">
-      ABOUT US
-    </p>
-
-    <h2>
-      Dr Doi Technologies
-    </h2>
-
-    <p>
-      We provide professional electrical,
-      electronics, solar, ICT, networking,
-      refrigeration, air conditioning,
-      plumbing, welding and technology
-      solutions for homes, businesses
-      and institutions.
-    </p>
-
-    <div className="about-grid">
-
-      <div>
-        <strong>⚡</strong>
-        <h3>Professional</h3>
-        <p>
-          Reliable technical solutions.
-        </p>
-      </div>
-
-      <div>
-        <strong>🛠️</strong>
-        <h3>Reliable</h3>
-        <p>
-          Quality service and support.
-        </p>
-      </div>
-
-      <div>
-        <strong>📍</strong>
-        <h3>Nakuru</h3>
-        <p>
-          Serving Nakuru and beyond.
-        </p>
-      </div>
-
-    </div>
-
-  </section>
-
-  {/* SERVICES */}
-
-  <section
-    className="services-section"
-    id="services"
-  >
-
-    <div className="section-heading">
-
-      <p className="eyebrow">
-        OUR SERVICES
-      </p>
-
-      <h2>
-        Choose a Service Category
-      </h2>
-
-      <p>
-        Tap a category below to view
-        available services and pricing.
-      </p>
-
-    </div>
-
-    <div className="service-grid">
-
-      {serviceGroups.map(
-        (group) => (
+      <nav className="navbar">
+        <div className="nav-inner">
 
           <button
-            type="button"
-            className="service-card"
-            key={group.title}
+            className="logo-button"
             onClick={() =>
-              openGroup(group)
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              })
             }
           >
-
-            <span className="service-icon">
-              {group.icon}
-            </span>
-
-            <h3>
-              {group.title}
-            </h3>
-
-            <p>
-              {group.description}
-            </p>
-
-            <span className="view-services">
-              View Services →
-            </span>
-
+            <img
+              src="/images/logo.svg"
+              alt="Dr Doi Technologies"
+              className="logo"
+            />
           </button>
 
-        )
-      )}
+          <button
+            className="menu-button"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ☰
+          </button>
 
-    </div>
+          <div
+            className={`nav-links ${
+              menuOpen ? "open" : ""
+            }`}
+          >
+            <button
+              onClick={() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+                setMenuOpen(false);
+              }}
+            >
+              Home
+            </button>
 
-  </section>
+            <button
+              onClick={() => {
+                document
+                  .getElementById("about")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                setMenuOpen(false);
+              }}
+            >
+              About
+            </button>
 
-  {/* SERVICE MODAL */}
+            <button onClick={showServices}>
+              Services
+            </button>
 
-  {selectedGroup && (
+            <button
+              onClick={() => {
+                document
+                  .getElementById("contact")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                setMenuOpen(false);
+              }}
+            >
+              Contact
+            </button>
 
-    <div className="modal-overlay">
+            <button
+              className="nav-book"
+              onClick={()
+                              bookService("a general service")
+            }
+            >
+              Book Now
+            </button>
+          </div>
+        </div>
+      </nav>
 
-      <div className="service-modal">
+      {/* HERO */}
 
-        <button
-          type="button"
-          className="close-button"
-          onClick={() =>
-            setSelectedGroup(null)
-          }
-        >
-          ×
-        </button>
+      <section className="hero">
+        <div className="hero-content">
 
-        <span className="modal-icon">
-          {selectedGroup.icon}
-        </span>
+          <div className="eyebrow">
+            DR DOI TECHNOLOGIES
+          </div>
+
+          <h1>
+            Professional Electrical &
+            Technology Solutions
+          </h1>
+
+          <p>
+            Reliable electrical, electronics, solar,
+            refrigeration, air conditioning, ICT,
+            networking, CCTV and automation services.
+          </p>
+
+          <div className="hero-buttons">
+
+            <button
+              className="primary-btn"
+              onClick={() =>
+                bookService("a general service")
+              }
+            >
+              Book a Service
+            </button>
+
+            <button
+              className="secondary-btn"
+              onClick={showServices}
+            >
+              Explore Services
+            </button>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ABOUT */}
+
+      <section
+        className="section about"
+        id="about"
+      >
+        <div className="eyebrow">
+          ABOUT US
+        </div>
 
         <h2>
-          {selectedGroup.title}
+          Complete technical solutions
+          under one roof.
         </h2>
 
         <p>
-          {selectedGroup.description}
+          Dr Doi Technologies provides
+          professional technical services for
+          homes, businesses and institutions.
+          We focus on reliable installations,
+          repairs, maintenance and modern
+          technology solutions.
         </p>
+      </section>
 
-        <div className="specific-services">
+      {/* SERVICES */}
 
-          {selectedGroup.services.map(
-            (service) => (
-
-              <button
-                type="button"
-                key={service.name}
-                className="specific-service"
-                onClick={() =>
-                  chooseService(service)
-                }
-              >
-
-                <div>
-
-                  <strong>
-                    {service.name}
-                  </strong>
-
-                  <span>
-                    {service.description}
-                  </span>
-
-                </div>
-
-                <b>
-                  KSh{" "}
-                  {service.price.toLocaleString()}
-                </b>
-
-              </button>
-
-            )
-          )}
-
+      <section
+        className="section"
+        id="services"
+      >
+        <div className="eyebrow">
+          OUR SERVICES
         </div>
 
-      </div>
+        <h2>
+          What can we help you with?
+        </h2>
 
-    </div>
+        <p className="section-intro">
+          Select a service category below to
+          view the available services.
+        </p>
 
-  )}
+        {!selectedGroup && (
+          <div className="groups">
 
-  {/* BOOKING MODAL */}
+            {serviceGroups.map((group) => (
+              <button
+                key={group.name}
+                className="group-card"
+                onClick={() => {
+                  setSelectedGroup(group);
+                  setSelectedService(null);
+                }}
+              >
+                <span className="group-icon">
+                  {group.icon}
+                </span>
 
-  {showBooking && (
+                <h3>
+                  {group.name}
+                </h3>
 
-    <div className="modal-overlay">
+                <p>
+                  {group.description}
+                </p>
 
-      <div className="booking-modal">
+                <span className="view-services">
+                  View Services →
+                </span>
+              </button>
+            ))}
 
-        <button
-          type="button"
-          className="close-button"
-          onClick={closeBooking}
-        >
-          ×
-        </button>
+          </div>
+        )}
 
-        <BookingForm
-          initialService={
-            bookingCategory
-          }
-          initialSpecificService={
-            bookingService
-          }
-          onClose={
-            closeBooking
-          }
-        />
+        {selectedGroup && (
+          <div className="service-area">
 
-      </div>
+            <button
+              className="back-button"
+              onClick={() => {
+                setSelectedGroup(null);
+                setSelectedService(null);
+              }}
+            >
+              ← Back to Categories
+            </button>
 
-    </div>
+            <h2 className="category-title">
+              {selectedGroup.icon}{" "}
+              {selectedGroup.name}
+            </h2>
 
-  )}
+            <p className="section-intro">
+              Select a service below to view
+              details and book the service.
+            </p>
 
-  {/* CONTACT */}
+            <div className="service-grid">
 
-  <section
-    className="contact"
-    id="contact"
-  >
+              {selectedGroup.services.map(
+                (service) => (
+                  <button
+                    key={service.name}
+                    className="service-card"
+                    onClick={() =>
+                      setSelectedService(service)
+                    }
+                  >
 
-    <p className="eyebrow">
-      GET IN TOUCH
-    </p>
+                    <img
+                      src={service.image}
+                      alt={service.name}
+                      className="service-image"
+                    />
 
-    <h2>
-      Need a Technical Solution?
-    </h2>
+                    <div className="service-card-content">
 
-    <p>
-      Contact Dr Doi Technologies
-      for electrical, electronics,
-      solar, networking, refrigeration,
-      air conditioning and technology
-      services.
-    </p>
+                      <h3>
+                        {service.name}
+                      </h3>
 
-    <a
-      href="https://wa.me/254114280995"
-      className="whatsapp-button"
-    >
-      WhatsApp Us
-    </a>
+                      <p>
+                        {service.description}
+                      </p>
 
-  </section>
+                      <span>
+                        View Details →
+                      </span>
 
-  {/* FOOTER */}
+                    </div>
 
-  <footer>
+                  </button>
+                )
+              )}
 
-    <div>
-      <img
-        src="/images/logo.svg"
-        alt="Dr Doi Technologies"
-      />
-    </div>
+            </div>
 
-    <p>
-      ©{" "}
-      {new Date().getFullYear()}{" "}
-      Dr Doi Technologies.
-      All rights reserved.
-    </p>
+            {/* SERVICE DETAILS */}
 
-  </footer>
+            {selectedService && (
+              <div className="service-details">
 
-</main>
+                <img
+                  src={selectedService.image}
+                  alt={selectedService.name}
+                />
 
-);
- }
+                <div className="service-details-content">
+
+                  <div className="eyebrow">
+                    SERVICE DETAILS
+                  </div>
+
+                  <h2>
+                    {selectedService.name}
+                  </h2>
+
+                  <p>
+                    {selectedService.description}
+                  </p>
+
+                  <h3>
+                    Services included
+                  </h3>
+
+                  <ul>
+                    {selectedService.details.map(
+                      (detail) => (
+                        <li key={detail}>
+                          {detail}
+                        </li>
+                      )
+                    )}
+                  </ul>
+
+                  <button
+                    className="primary-btn"
+                    onClick={() =>
+                      bookService(
+                        selectedService.name
+                      )
+                    }
+                  >
+                    Book This Service
+                  </button>
+
+                </div>
+              </div>
+            )}
+
+          </div>
+        )}
+
+      </section>
+
+      {/* CONTACT / BOOKING */}
+
+      <section
+        className="booking"
+        id="contact"
+      >
+        <div className="booking-content">
+
+          <div className="eyebrow">
+            NEED OUR SERVICES?
+          </div>
+
+          <h2>
+            Let's solve your technical problem.
+          </h2>
+
+          <p>
+            Contact Dr Doi Technologies today
+            for professional electrical,
+            electronics, solar, refrigeration,
+            ICT and technology services.
+          </p>
+
+          <button
+            className="booking-button"
+            onClick={() =>
+              bookService("a general service")
+            }
+          >
+            Book Through WhatsApp
+          </button>
+
+        </div>
+      </section>
+
+      {/* FOOTER */}
+
+      <footer className="footer">
+
+        <h3>
+          DR DOI TECHNOLOGIES
+        </h3>
+
+        <p>
+          Electrical • Electronics • Solar •
+          Refrigeration • ICT • Security •
+          Automation
+        </p>
+
+        <p>
+          Nakuru, Kenya
+        </p>
+
+        <p>
+          © {new Date().getFullYear()} Dr Doi Technologies.
+          All rights reserved.
+        </p>
+1044 </footer>
+
+1046 </main>
+
+1048 }
+      

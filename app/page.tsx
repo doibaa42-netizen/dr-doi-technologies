@@ -1110,6 +1110,6 @@ function openBooking(
 )}
 
  </main>
-
- }
+);
+}
       

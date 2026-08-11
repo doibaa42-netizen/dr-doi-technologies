@@ -1,170 +1,149 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const services = {
 "Electrical Services": [
-"House wiring",
-"Electrical installation",
+"House Wiring",
+"Electrical Installation",
 "Troubleshooting",
-"Socket and switch installation",
-"Lighting installation",
-"DB and distribution board work",
-"MCB and breaker replacement",
-"Electrical maintenance",
+"Socket and Switch Installation",
+"Lighting Installation",
+"DB and Distribution Board Work",
+"MCB and Breaker Replacement",
+"Electrical Maintenance",
 ],
 
-"Solar Energy": [
-"Solar panel installation",
-"Solar system design",
-"Inverter installation",
-"Battery installation",
-"Solar troubleshooting",
-"Solar maintenance",
-"Solar lighting",
+"Solar Solutions": [
+"Solar System Installation",
+"Solar System Design",
+"Inverter Installation",
+"Battery Installation",
+"Solar Fault Diagnosis",
+"Solar Maintenance",
+"Solar Lighting",
 ],
 
 "Solar Water Heaters": [
-"Solar water heater installation",
-"System inspection",
-"Leak troubleshooting",
-"Controller installation",
-"Heating element replacement",
+"Solar Water Heater Installation",
+"System Inspection",
+"Leak Troubleshooting",
+"Controller Installation",
+"Heating Element Replacement",
 "Maintenance",
 ],
 
 "Air Conditioning": [
-"AC installation",
-"AC servicing",
-"AC cleaning",
-"AC troubleshooting",
-"Electrical fault diagnosis",
-"AC maintenance",
+"AC Installation",
+"AC Servicing",
+"AC Cleaning",
+"AC Troubleshooting",
+"Electrical Fault Diagnosis",
+"AC Maintenance",
 ],
 
 Refrigeration: [
-"Refrigerator repair",
-"Freezer repair",
-"Cooling fault diagnosis",
-"Electrical troubleshooting",
-"Thermostat replacement",
-"Refrigeration maintenance",
+"Refrigerator Repair",
+"Freezer Repair",
+"Cooling Fault Diagnosis",
+"Electrical Troubleshooting",
+"Thermostat Replacement",
+"Refrigeration Maintenance",
 ],
 
 Electronics: [
-"Electronic equipment troubleshooting",
-"Power supply repair",
-"Circuit diagnosis",
-"Component replacement",
-"Audio equipment repair",
-"Electronic maintenance",
+"Electronic Equipment Troubleshooting",
+"Power Supply Repair",
+"Circuit Diagnosis",
+"Component Replacement",
+"Audio Equipment Repair",
+"Electronic Maintenance",
 ],
 
 "Networking & Wi-Fi": [
-"Wi-Fi installation",
-"Router configuration",
-"LAN installation",
-"Ethernet cabling",
-"Network troubleshooting",
-"Network maintenance",
+"Wi-Fi Installation",
+"Router Configuration",
+"LAN Installation",
+"Ethernet Cabling",
+"Network Troubleshooting",
+"Network Maintenance",
 ],
 
 "CCTV & Security": [
-"CCTV camera installation",
-"DVR/NVR configuration",
-"Remote CCTV viewing",
-"Camera troubleshooting",
-"Security system maintenance",
+"CCTV Camera Installation",
+"DVR/NVR Configuration",
+"Remote CCTV Viewing",
+"Camera Troubleshooting",
+"Security System Maintenance",
 ],
 
 "Computers & IT": [
-"Computer troubleshooting",
-"Windows installation",
-"Software installation",
-"Computer maintenance",
-"Hardware diagnosis",
-"IT support",
+"Computer Troubleshooting",
+"Windows Installation",
+"Software Installation",
+"Computer Maintenance",
+"Hardware Diagnosis",
+"IT Support",
 ],
 
 Printers: [
-"Printer installation",
-"Printer troubleshooting",
-"Network printer setup",
-"Driver installation",
-"Printer maintenance",
+"Printer Installation",
+"Printer Troubleshooting",
+"Network Printer Setup",
+"Driver Installation",
+"Printer Maintenance",
 ],
 
 Plumbing: [
-"Pipe installation",
-"Leak repair",
-"Tap installation",
-"Water system troubleshooting",
-"Drainage troubleshooting",
-"Plumbing maintenance",
+"Pipe Installation",
+"Leak Repair",
+"Tap Installation",
+"Water System Troubleshooting",
+"Drainage Troubleshooting",
+"Plumbing Maintenance",
 ],
 
 "Welding & Fabrication": [
-"Metal welding",
-"Gate fabrication",
-"Door fabrication",
-"Metal repairs",
-"Frame fabrication",
-"General fabrication",
+"Metal Welding",
+"Gate Fabrication",
+"Door Fabrication",
+"Metal Repairs",
+"Frame Fabrication",
+"General Fabrication",
 ],
 
 "General Troubleshooting": [
-"Electrical fault diagnosis",
-"Electronic fault diagnosis",
-"Appliance troubleshooting",
-"Dispenser troubleshooting",
-"Power-related faults",
-"Equipment inspection",
+"Electrical Fault Diagnosis",
+"Electronic Fault Diagnosis",
+"Appliance Troubleshooting",
+"Dispenser Troubleshooting",
+"Power-Related Faults",
+"Equipment Inspection",
 ],
-};
+} as const;
 
-const packages = [
-{
-name: "Basic",
-price: 1500,
-description: "Inspection, diagnosis and basic service.",
-},
-{
-name: "Standard",
-price: 3500,
-description: "Professional service with repair or installation.",
-},
-{
-name: "Premium",
-price: 7500,
-description: "Complete professional service with priority support.",
-},
-];
-
-type ServiceName = keyof typeof services;
+type ServiceCategory = keyof typeof services;
 
 type Props = {
-  initialService?: string;
-  initialSpecificService?: string;
-  onClose?: () => void;
+initialService?: string;
+initialSpecificService?: string;
+onClose?: () => void;
 };
 
 export default function BookingForm({
-  initialService = "",
-  initialSpecificService = "",
-  onClose,
+initialService = "",
+initialSpecificService = "",
+onClose,
 }: Props) {
 const [name, setName] = useState("");
 const [phone, setPhone] = useState("");
 const [location, setLocation] = useState("");
 
-const [specificService, setSpecificService] =
-  useState(initialSpecificService);
+const [service, setService] =
+useState(initialService);
 
 const [specificService, setSpecificService] =
 useState(initialSpecificService);
-
-const [selectedPackage, setSelectedPackage] =
-useState("");
 
 const [description, setDescription] =
 useState("");
@@ -181,25 +160,21 @@ useState(false);
 const [reference, setReference] =
 useState("");
 
-const selectedServices =
-service && service in services
-? services[service as ServiceName]
-: [];
+useEffect(() => {
+setService(initialService);
+setSpecificService(initialSpecificService);
+}, [initialService, initialSpecificService]);
 
-const selectedPackageData =
-packages.find(
-(item) => item.name === selectedPackage
-);
+const selectedServices =
+service &&
+service in services
+? services[service as ServiceCategory]
+: [];
 
 async function submitBooking(
 event: FormEvent<HTMLFormElement>
 ) {
 event.preventDefault();
-
-if (!selectedPackage) {
-  setError("Please select a service package.");
-  return;
-}
 
 setLoading(true);
 setError("");
@@ -220,22 +195,14 @@ try {
         service,
         requestedService:
           specificService,
-        package:
-          selectedPackage,
-        amount:
-          selectedPackageData?.price,
         description,
       }),
     }
   );
 
-  const data =
-    await response.json();
+  const data = await response.json();
 
-  if (
-    !response.ok ||
-    !data.success
-  ) {
+  if (!response.ok || !data.success) {
     throw new Error(
       data.message ||
         "Booking submission failed."
@@ -243,8 +210,7 @@ try {
   }
 
   setReference(
-    data.booking
-      ?.bookingReference ||
+    data.booking?.bookingReference ||
       "BOOKING RECEIVED"
   );
 
@@ -283,7 +249,6 @@ return (
     </p>
 
     <div className="booking-reference">
-
       <small>
         BOOKING REFERENCE
       </small>
@@ -291,32 +256,11 @@ return (
       <strong>
         {reference}
       </strong>
-
-    </div>
-
-    <div className="booking-summary">
-
-      <p>
-        <strong>Service:</strong>{" "}
-        {specificService}
-      </p>
-
-      <p>
-        <strong>Package:</strong>{" "}
-        {selectedPackage}
-      </p>
-
-      <p>
-        <strong>Estimated Fee:</strong>{" "}
-        KSh{" "}
-        {selectedPackageData?.price.toLocaleString()}
-      </p>
-
     </div>
 
     <a
       href={`https://wa.me/254114280995?text=${encodeURIComponent(
-        `Hello Dr Doi Technologies. I have submitted booking ${reference} for ${specificService}. Package: ${selectedPackage}. Estimated fee: KSh ${selectedPackageData?.price}.`
+        `Hello Dr Doi Technologies. I have submitted booking ${reference} for ${service} - ${specificService}.`
       )}`}
       target="_blank"
       rel="noopener noreferrer"
@@ -325,13 +269,15 @@ return (
       📱 Continue on WhatsApp
     </a>
 
-    <button
-      type="button"
-      className="close-booking-button"
-      onClick={onClose}
-    >
-      Close
-    </button>
+    {onClose && (
+      <button
+        type="button"
+        className="close-booking-button"
+        onClick={onClose}
+      >
+        Close
+      </button>
+    )}
 
   </div>
 );
@@ -355,8 +301,7 @@ onSubmit={submitBooking}
     </h2>
 
     <p>
-      Choose your service and
-      preferred service package.
+      Tell us what service you need.
     </p>
 
   </div>
@@ -370,7 +315,6 @@ onSubmit={submitBooking}
   <div className="form-grid">
 
     <div className="form-group">
-
       <label>
         Full Name *
       </label>
@@ -378,17 +322,15 @@ onSubmit={submitBooking}
       <input
         type="text"
         value={name}
-        onChange={(e) =>
-          setName(e.target.value)
+        onChange={(event) =>
+          setName(event.target.value)
         }
         placeholder="Enter your full name"
         required
       />
-
     </div>
 
     <div className="form-group">
-
       <label>
         Phone Number *
       </label>
@@ -396,19 +338,17 @@ onSubmit={submitBooking}
       <input
         type="tel"
         value={phone}
-        onChange={(e) =>
-          setPhone(e.target.value)
+        onChange={(event) =>
+          setPhone(event.target.value)
         }
         placeholder="0712345678"
         required
       />
-
     </div>
 
   </div>
 
   <div className="form-group">
-
     <label>
       Location *
     </label>
@@ -416,32 +356,29 @@ onSubmit={submitBooking}
     <input
       type="text"
       value={location}
-      onChange={(e) =>
-        setLocation(e.target.value)
+      onChange={(event) =>
+        setLocation(event.target.value)
       }
       placeholder="e.g. Nakuru, Lanet"
       required
     />
-
   </div>
 
   <div className="form-group">
-
     <label>
       Service Category *
     </label>
 
     <select
       value={service}
-      onChange={(e) => {
-        setService(e.target.value);
+      onChange={(event) => {
+        setService(event.target.value);
         setSpecificService("");
       }}
       required
     >
-
       <option value="">
-        Select a service
+        Select a service category
       </option>
 
       {Object.keys(services).map(
@@ -454,30 +391,26 @@ onSubmit={submitBooking}
           </option>
         )
       )}
-
     </select>
-
   </div>
 
   <div className="form-group">
-
     <label>
       Specific Service *
     </label>
 
     <select
       value={specificService}
-      onChange={(e) =>
+      onChange={(event) =>
         setSpecificService(
-          e.target.value
+          event.target.value
         )
       }
       disabled={!service}
       required
     >
-
       <option value="">
-        Select the service
+        Select the specific service
       </option>
 
       {selectedServices.map(
@@ -490,97 +423,19 @@ onSubmit={submitBooking}
           </option>
         )
       )}
-
     </select>
-
   </div>
 
-  {/* PACKAGES */}
-
   <div className="form-group">
-
-    <label>
-      Choose Service Package *
-    </label>
-
-    <div className="package-grid">
-
-      {packages.map((item) => (
-
-        <button
-          key={item.name}
-          type="button"
-          className={`package-card ${
-            selectedPackage ===
-            item.name
-              ? "package-selected"
-              : ""
-          }`}
-          onClick={() =>
-            setSelectedPackage(
-              item.name
-            )
-          }
-        >
-
-          <span className="package-name">
-            {item.name}
-          </span>
-
-          <strong className="package-price">
-            KSh{" "}
-            {item.price.toLocaleString()}
-          </strong>
-
-          <span className="package-description">
-            {item.description}
-          </span>
-
-          {selectedPackage ===
-            item.name && (
-            <span className="package-check">
-              ✓ Selected
-            </span>
-          )}
-
-        </button>
-
-      ))}
-
-    </div>
-
-  </div>
-
-  {/* SELECTED PACKAGE */}
-
-  {selectedPackageData && (
-    <div className="selected-package">
-
-      <span>
-        Selected Package
-      </span>
-
-      <strong>
-        {selectedPackageData.name}
-        {" — "}
-        KSh{" "}
-        {selectedPackageData.price.toLocaleString()}
-      </strong>
-
-    </div>
-  )}
-
-  <div className="form-group">
-
     <label>
       Describe the Problem
     </label>
 
     <textarea
       value={description}
-      onChange={(e) =>
+      onChange={(event) =>
         setDescription(
-          e.target.value
+          event.target.value
         )
       }
       placeholder="Describe what you need..."
@@ -591,7 +446,6 @@ onSubmit={submitBooking}
     <small>
       {description.length}/1000
     </small>
-
   </div>
 
   <div className="booking-notice">
@@ -604,14 +458,12 @@ onSubmit={submitBooking}
     className="submit-booking"
     disabled={loading}
   >
-
     {loading
       ? "Submitting..."
       : "Submit Booking →"}
-
   </button>
 
 </form>
 
 );
-}
+  }

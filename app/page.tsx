@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import BookingForm from 
-"@/app/components/BookingForm";
 
-import Navbar from 
-"@/app/components/Navbar";
+import BookingForm from "@/app/components/BookingForm";
+
+import Navbar from "@/app/components/Navbar";
 type Service = {
   name: string;
   image: string;

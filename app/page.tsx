@@ -1,5 +1,5 @@
 "use client";
-  
+
 import BookingForm from 
 "@/app/components/BookingForm";
 import Navbar from 

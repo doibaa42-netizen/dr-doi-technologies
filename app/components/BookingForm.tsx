@@ -140,15 +140,28 @@ export default function BookingForm({
   const [location, setLocation] = useState("");
 
   const [service, setService] = useState(initialService);
-  const [specificService, setSpecificService] =
-    useState(initialSpecificService);
+
+  const [specificService, setSpecificService] = useState(
+    initialSpecificService
+  );
 
   const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [success, setSuccess] = useState(false);
   const [reference, setReference] = useState("");
+
+  /*
+   * PRIMARY WHATSAPP NUMBER
+   * 0740568226 = 254740568226 internationally
+   *
+   * SECONDARY CONTACT
+   * 0114280995
+   */
+  const whatsappNumber = "254740568226";
+  const secondaryNumber = "0114280995";
 
   useEffect(() => {
     setService(initialService);
@@ -169,6 +182,11 @@ export default function BookingForm({
     setError("");
 
     try {
+      /*
+       * IMPORTANT:
+       * Booking does NOT require payment or amount.
+       * The booking is submitted first.
+       */
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: {
@@ -184,20 +202,7 @@ export default function BookingForm({
         }),
       });
 
-      const contentType =
-        response.headers.get("content-type") || "";
-
-      let data: any;
-
-      if (contentType.includes("application/json")) {
-        data = await response.json();
-      } else {
-        await response.text();
-
-        throw new Error(
-          `Booking server error (${response.status}). Please try again.`
-        );
-      }
+      const data = await response.json();
 
       if (!response.ok || !data.success) {
         throw new Error(
@@ -206,8 +211,7 @@ export default function BookingForm({
       }
 
       setReference(
-        data.booking?.bookingReference ||
-          "BOOKING RECEIVED"
+        data.booking?.bookingReference || "BOOKING RECEIVED"
       );
 
       setSuccess(true);
@@ -222,10 +226,33 @@ export default function BookingForm({
     }
   }
 
+  /*
+   * BOOKING SUCCESS SCREEN
+   */
   if (success) {
+    const whatsappMessage = encodeURIComponent(
+      `Hello Dr Doi Technologies.
+
+I have submitted a service booking.
+
+Booking Reference: ${reference}
+Name: ${name}
+Phone: ${phone}
+Location: ${location}
+Service: ${service}
+Specific Service: ${specificService}
+
+Description:
+${description || "No additional description provided."}
+
+Please confirm my booking and advise me on the next step.`
+    );
+
+    const whatsappLink =
+      `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
     return (
       <div className="booking-success">
-
         <div className="success-icon">
           ✓
         </div>
@@ -239,8 +266,7 @@ export default function BookingForm({
         </h2>
 
         <p>
-          Your service request has been
-          successfully received.
+          Your service request has been successfully received.
         </p>
 
         <div className="booking-reference">
@@ -253,26 +279,21 @@ export default function BookingForm({
           </strong>
         </div>
 
-        <button
-          type="button"
+        {/* WHATSAPP BUTTON */}
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener noreferrer"
           className="whatsapp-button"
-          onClick={() => {
-            const message =
-              `Hello Dr Doi Technologies. I have submitted booking ${reference} for ${service} - ${specificService}. My name is ${name}, phone number is ${phone}, and location is ${location}.`;
-
-            const whatsappUrl =
-              `https://wa.me/254740568226?text=${encodeURIComponent(
-                message
-              )}`;
-
-            window.open(
-              whatsappUrl,
-              "_blank"
-            );
-          }}
         >
           📱 Continue on WhatsApp
-        </button>
+        </a>
+
+        <p className="booking-contact">
+          WhatsApp: <strong>0740 568 226</strong>
+          <br />
+          Alternative: <strong>0114 280 995</strong>
+        </p>
 
         {onClose && (
           <button
@@ -283,19 +304,19 @@ export default function BookingForm({
             Close
           </button>
         )}
-
       </div>
     );
   }
 
+  /*
+   * BOOKING FORM
+   */
   return (
     <form
       className="booking-form"
       onSubmit={submitBooking}
     >
-
       <div className="booking-header">
-
         <span className="modal-label">
           DR DOI TECHNOLOGIES
         </span>
@@ -307,7 +328,6 @@ export default function BookingForm({
         <p>
           Tell us what service you need.
         </p>
-
       </div>
 
       {error && (
@@ -317,7 +337,6 @@ export default function BookingForm({
       )}
 
       <div className="form-grid">
-
         <div className="form-group">
           <label>
             Full Name *
@@ -349,7 +368,6 @@ export default function BookingForm({
             required
           />
         </div>
-
       </div>
 
       <div className="form-group">
@@ -452,6 +470,7 @@ export default function BookingForm({
         </small>
       </div>
 
+      {/* NO PAYMENT/AMOUNT REQUIRED HERE */}
       <div className="booking-notice">
         🔒 Your information is used only
         to process your booking.
@@ -467,6 +486,11 @@ export default function BookingForm({
           : "Submit Booking →"}
       </button>
 
+      <p className="booking-payment-note">
+        💳 Payment details and service charges
+        can be discussed after your booking
+        has been received.
+      </p>
     </form>
   );
-  }
+    }

@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       description,
     } = body;
 
+    // Validate required booking information
     if (
       !name ||
       !phone ||
@@ -30,10 +31,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Generate booking reference
     const bookingReference =
-      "DRDOI-" +
-      Date.now().toString().slice(-8);
+      "DRDOI-" + Date.now().toString().slice(-8);
 
+    // Create booking
     const booking = {
       bookingReference,
       name,
@@ -46,8 +48,10 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
+    // Log booking in Vercel
     console.log("NEW DR DOI BOOKING:", booking);
 
+    // Return JSON response to the website
     return NextResponse.json(
       {
         success: true,
@@ -68,4 +72,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-      }
+}

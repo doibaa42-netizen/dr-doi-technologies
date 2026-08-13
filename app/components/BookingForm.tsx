@@ -180,26 +180,49 @@ setLoading(true);
 setError("");
 
 try {
-  const response = await fetch(
-    "/api/bookings",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        phone,
-        location,
-        service,
-        requestedService:
-          specificService,
-        description,
-      }),
-    }
-  );
+  const response = await fetch("/api/bookings", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name,
+    phone,
+    location,
+    service,
+    requestedService: specificService,
+    description,
+  }),
+});
 
+const contentType =
+  response.headers.get("content-type") || "";
+
+let data: any;
+
+if (contentType.includes("application/json")) {
+  data = await response.json();
+} else {
+  const text = await response.text();
+
+  throw new Error(
+    `Booking server error (${response.status}). Please try again.`
+  );
+}
+
+if (!response.ok || !data.success) {
+  throw new Error(
+    data.message ||
+      "Booking submission failed."
+  );
+}
+
+setReference(
+  data.booking?.bookingReference ||
+    "BOOKING RECEIVED"
+);
+
+setSuccess(true);
   const data = await response.json();
 
   if (!response.ok || !data.success) {

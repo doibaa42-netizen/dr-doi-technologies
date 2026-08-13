@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
       description,
     } = body;
 
-    // Validate required fields
     if (
       !name ||
       !phone ||
@@ -30,12 +29,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate booking reference
     const bookingReference =
       "DRDOI-" +
       Date.now().toString().slice(-8);
 
-    // Booking information
     const booking = {
       bookingReference,
       name,
@@ -44,22 +41,19 @@ export async function POST(request: NextRequest) {
       service,
       requestedService,
       description: description || "",
-      createdAt: new Date().toISOString(),
       status: "Received",
+      createdAt: new Date().toISOString(),
     };
 
-    console.log("NEW DR DOI BOOKING:", booking);
+    console.log("NEW BOOKING:", booking);
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Booking received successfully.",
-        booking,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      success: true,
+      message: "Booking received successfully.",
+      booking,
+    });
   } catch (error) {
-    console.error("BOOKING API ERROR:", error);
+    console.error("BOOKING ERROR:", error);
 
     return NextResponse.json(
       {

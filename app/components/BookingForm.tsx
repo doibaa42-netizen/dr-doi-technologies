@@ -486,11 +486,23 @@ Please confirm my booking and advise me on the next step.`
           : "Submit Booking →"}
       </button>
 
-      <p className="booking-payment-note">
-        💳 Payment details and service charges
-        can be discussed after your booking
-        has been received.
-      </p>
+      <div className="booking-payment-note">
+  <strong>💳 Payment Terms</strong>
+
+  <p>
+    A 50% deposit is required before service begins.
+  </p>
+
+  <p>
+    The remaining 50% balance is payable after
+    completion of the service.
+  </p>
+
+  <small>
+    Final pricing will be confirmed before the
+    deposit is requested.
+  </small>
+</div>
     </form>
   );
     }

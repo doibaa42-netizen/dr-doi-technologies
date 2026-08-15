@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,7 +22,6 @@ export async function POST(request: NextRequest) {
       description,
     } = body;
 
-    // Check required booking information
     if (
       !name ||
       !phone ||
@@ -34,40 +39,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate booking reference
     const bookingReference =
       "DRDOI-" + Date.now().toString().slice(-8);
 
-    // Create booking object
-    const booking = {
-      bookingReference,
-      name,
-      phone,
-      location,
-      service,
-      requestedService,
-      description: description || "",
-      status: "Pending",
-      createdAt: new Date().toISOString(),
-    };
+    const { data: booking, error: databaseError } =
+      await supabase
+        .from("bookings")
+        .insert({
+          booking_reference: bookingReference,
+          name,
+          phone,
+          location,
+          service,
+          requested_service: requestedService,
+          description: description || "",
+          status: "Pending",
+        })
+        .select()
+        .single();
 
-    console.log("NEW DR DOI BOOKING:", booking);
+    if (databaseError) {
+      console.error(
+        "SUPABASE BOOKING ERROR:",
+        databaseError
+      );
 
-    /*
-     * ----------------------------------------------------
-     * SEND EMAIL NOTIFICATION
-     * ----------------------------------------------------
-     *
-     * This sends the booking details to your email.
-     *
-     * Required Vercel variables:
-     *
-     * RESEND_API_KEY
-     * RESEND_FROM_EMAIL
-     * BOOKING_NOTIFICATION_EMAIL
-     *
-     * ----------------------------------------------------
-     */
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Unable to save your booking. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
 
     if (
       process.env.RESEND_API_KEY &&
@@ -77,8 +82,11 @@ export async function POST(request: NextRequest) {
       const { error: emailError } =
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL,
-          to: [process.env.BOOKING_NOTIFICATION_EMAIL],
-          subject: `🔔 New Dr Doi Booking - ${bookingReference}`,
+          to: [
+            process.env.BOOKING_NOTIFICATION_EMAIL,
+          ],
+          subject:
+            `New Dr Doi Booking - ${bookingReference}`,
           html: `
             <div style="
               font-family: Arial, sans-serif;
@@ -99,15 +107,13 @@ export async function POST(request: NextRequest) {
                 <h1 style="
                   color: #00c8ff;
                   margin: 0;
-                  font-size: 26px;
                 ">
                   DR DOI TECHNOLOGIES
                 </h1>
 
                 <p style="
-                  color: #ffffff;
-                  margin: 8px 0 0;
-                  font-size: 16px;
+                  color: white;
+                  margin-bottom: 0;
                 ">
                   New Service Booking
                 </p>
@@ -115,35 +121,29 @@ export async function POST(request: NextRequest) {
               </div>
 
               <div style="
-                background: #ffffff;
+                background: white;
                 padding: 25px;
                 border-radius: 0 0 12px 12px;
               ">
 
-                <h2 style="
-                  color: #071a2b;
-                  margin-top: 0;
-                ">
-                  🔔 New Booking Received
-                </h2>
+                <h2>New Booking Received</h2>
 
                 <p>
-                  A customer has submitted a new service
-                  booking through the Dr Doi Technologies website.
+                  A customer has submitted a new
+                  service booking through your website.
                 </p>
 
                 <div style="
                   background: #eaf8ff;
                   padding: 18px;
                   border-radius: 10px;
-                  margin: 20px 0;
                   text-align: center;
+                  margin: 20px 0;
                 ">
 
                   <p style="
                     margin: 0 0 6px;
                     color: #555;
-                    font-size: 13px;
                   ">
                     BOOKING REFERENCE
                   </p>
@@ -157,39 +157,24 @@ export async function POST(request: NextRequest) {
 
                 </div>
 
-                <h3 style="
-                  border-bottom: 1px solid #ddd;
-                  padding-bottom: 8px;
-                ">
-                  Customer Details
-                </h3>
+                <h3>Customer Details</h3>
 
                 <p>
-                  <strong>Full Name:</strong>
-                  ${name}
+                  <strong>Name:</strong> ${name}
                 </p>
 
                 <p>
-                  <strong>Phone:</strong>
-                  ${phone}
+                  <strong>Phone:</strong> ${phone}
                 </p>
 
                 <p>
-                  <strong>Location:</strong>
-                  ${location}
+                  <strong>Location:</strong> ${location}
                 </p>
 
-                <h3 style="
-                  border-bottom: 1px solid #ddd;
-                  padding-bottom: 8px;
-                  margin-top: 25px;
-                ">
-                  Service Requested
-                </h3>
+                <h3>Service Requested</h3>
 
                 <p>
-                  <strong>Category:</strong>
-                  ${service}
+                  <strong>Category:</strong> ${service}
                 </p>
 
                 <p>
@@ -207,7 +192,7 @@ export async function POST(request: NextRequest) {
 
                 <p>
                   <strong>Status:</strong>
-                  <span style="color: #e67e22;">
+                  <span style="color:#e67e22;">
                     Pending
                   </span>
                 </p>
@@ -219,82 +204,39 @@ export async function POST(request: NextRequest) {
                   })}
                 </p>
 
-                <div style="
-                  margin-top: 30px;
-                  padding: 18px;
-                  background: #f1f8f4;
-                  border-left: 5px solid #16a085;
-                  border-radius: 6px;
-                ">
+                <hr />
 
-                  <strong>
-                    Customer contact:
-                  </strong>
-
-                  <p style="margin-bottom: 0;">
-                    Call or WhatsApp the customer using
-                    the phone number provided above.
-                  </p>
-
-                </div>
-
-                <p style="
-                  margin-top: 30px;
-                  color: #777;
-                  font-size: 13px;
-                  text-align: center;
-                ">
-                  This notification was automatically
+                <p style="color:#666;">
+                  This booking was automatically
                   generated by the Dr Doi Technologies
-                  booking system.
+                  website.
                 </p>
 
               </div>
-
             </div>
           `,
         });
 
       if (emailError) {
-        /*
-         * IMPORTANT:
-         * Do not reject the booking just because
-         * email notification failed.
-         *
-         * The booking has already been accepted.
-         */
         console.error(
           "BOOKING EMAIL ERROR:",
           emailError
         );
-      } else {
-        console.log(
-          "BOOKING EMAIL SENT SUCCESSFULLY"
-        );
       }
-    } else {
-      console.warn(
-        "Email notification is not configured. " +
-        "Add RESEND_API_KEY, RESEND_FROM_EMAIL, " +
-        "and BOOKING_NOTIFICATION_EMAIL."
-      );
     }
-
-    /*
-     * ----------------------------------------------------
-     * RETURN SUCCESS TO THE WEBSITE
-     * ----------------------------------------------------
-     */
 
     return NextResponse.json(
       {
         success: true,
-        message:
-          "Booking received successfully.",
-        booking,
+        message: "Booking received successfully.",
+        booking: {
+          bookingReference,
+          ...booking,
+        },
       },
       { status: 200 }
     );
+
   } catch (error) {
     console.error(
       "BOOKING API ERROR:",
@@ -310,4 +252,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-                                              }
+          }
